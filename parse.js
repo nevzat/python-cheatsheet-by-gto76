@@ -51,6 +51,29 @@ const LRU_CACHE =
   '<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">fib</span><span class="hljs-params">(n)</span>:</span>\n' +
   '    <span class="hljs-keyword">return</span> n <span class="hljs-keyword">if</span> n &lt; <span class="hljs-number">2</span> <span class="hljs-keyword">else</span> fib(n-<span class="hljs-number">2</span>) + fib(n-<span class="hljs-number">1</span>)\n';
 
+const PARAMETRIZED_DECORATOR =
+  '<span class="hljs-keyword">from</span> functools <span class="hljs-keyword">import</span> wraps\n' +
+  '\n' +
+  '<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">debug</span><span class="hljs-params">(print_result=<span class="hljs-keyword">False</span>)</span>:</span>\n' +
+  '    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">decorator</span><span class="hljs-params">(func)</span>:</span>\n' +
+  '<span class="hljs-meta">        @wraps(func)</span>\n' +
+  '        <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">out</span><span class="hljs-params">(*args, **kwargs)</span>:</span>\n' +
+  '            result = func(*args, **kwargs)\n' +
+  '            print(func.__name__, result <span class="hljs-keyword">if</span> print_result <span class="hljs-keyword">else</span> <span class="hljs-string">\'\'</span>)\n' +
+  '            <span class="hljs-keyword">return</span> result\n' +
+  '        <span class="hljs-keyword">return</span> out\n' +
+  '    <span class="hljs-keyword">return</span> decorator\n' +
+  '\n' +
+  '<span class="hljs-meta">@debug(print_result=True)</span>\n' +
+  '<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">add</span><span class="hljs-params">(x, y)</span>:</span>\n' +
+  '    <span class="hljs-keyword">return</span> x + y\n';
+
+const REPR_USE_CASES =
+  'print/str/repr([&lt;el&gt;])\n' +
+  '<span class="hljs-string">f\'<span class="hljs-subst">{&lt;el&gt;!r}</span>\'</span>\n' +
+  'Z = dataclasses.make_dataclass(<span class="hljs-string">\'Z\'</span>, [<span class="hljs-string">\'a\'</span>]); print/str/repr(Z(&lt;el&gt;))\n' +
+  '<span class="hljs-meta">&gt;&gt;&gt; </span>&lt;el&gt;\n';
+
 const CONSTRUCTOR_OVERLOADING =
   '<span class="hljs-class"><span class="hljs-keyword">class</span> &lt;<span class="hljs-title">name</span>&gt;:</span>\n' +
   '    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span><span class="hljs-params">(self, a=<span class="hljs-keyword">None</span>)</span>:</span>\n' +
@@ -63,12 +86,15 @@ const DATACLASS =
   '&lt;tuple&gt; = (<span class="hljs-string">\'&lt;attr_name&gt;\'</span>, &lt;type&gt; [, &lt;default_value&gt;])';
 
 const SHUTIL_COPY =
-  'shutil.copy(from, to)               <span class="hljs-comment"># Copies the file. \'to\' can exist or be a dir.</span>\n' +
-  'shutil.copytree(from, to)           <span class="hljs-comment"># Copies the directory. \'to\' must not exist.</span>\n';
+  'shutil.copy(from, to)            <span class="hljs-comment"># Copies the file. \'to\' can exist or be a dir.</span>\n' +
+  'shutil.copytree(from, to)        <span class="hljs-comment"># Copies the directory. \'to\' must not exist.</span>\n';
 
 const OS_RENAME =
-  'os.rename(from, to)                 <span class="hljs-comment"># Renames/moves the file or directory.</span>\n' +
-  'os.replace(from, to)                <span class="hljs-comment"># Same, but overwrites \'to\' if it exists.</span>\n';
+  'os.rename(from, to)              <span class="hljs-comment"># Renames/moves the file or directory.</span>\n' +
+  'os.replace(from, to)             <span class="hljs-comment"># Same, but overwrites \'to\' if it exists.</span>\n';
+
+const STRUCT_FORMAT =
+  '<span class="hljs-section">\'&lt;n&gt;s\'</span><span class="hljs-attribute"></span>';
 
 const TYPE =
   '&lt;class&gt; = type(<span class="hljs-string">\'&lt;class_name&gt;\'</span>, &lt;tuple_of_parents&gt;, &lt;dict_of_class_attributes&gt;)';
@@ -80,6 +106,59 @@ const EVAL =
   '<span class="hljs-meta">&gt;&gt;&gt; </span>literal_eval(<span class="hljs-string">\'1 + 2\'</span>)\n' +
   'ValueError: malformed node or string\n';
 
+const COROUTINES =
+  '<span class="hljs-keyword">import</span> asyncio, collections, curses, curses.textpad, enum, random\n' +
+  '\n' +
+  'P = collections.namedtuple(<span class="hljs-string">\'P\'</span>, <span class="hljs-string">\'x y\'</span>)         <span class="hljs-comment"># Position</span>\n' +
+  'D = enum.Enum(<span class="hljs-string">\'D\'</span>, <span class="hljs-string">\'n e s w\'</span>)                  <span class="hljs-comment"># Direction</span>\n' +
+  'W, H = <span class="hljs-number">15</span>, <span class="hljs-number">7</span>                                   <span class="hljs-comment"># Width, Height</span>\n' +
+  '\n' +
+  '<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">main</span><span class="hljs-params">(screen)</span>:</span>\n' +
+  '    curses.curs_set(<span class="hljs-number">0</span>)                         <span class="hljs-comment"># Makes cursor invisible.</span>\n' +
+  '    screen.nodelay(<span class="hljs-keyword">True</span>)                       <span class="hljs-comment"># Makes getch() non-blocking.</span>\n' +
+  '    asyncio.run(main_coroutine(screen))        <span class="hljs-comment"># Starts running asyncio code.</span>\n' +
+  '\n' +
+  '<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">main_coroutine</span><span class="hljs-params">(screen)</span>:</span>\n' +
+  '    state = {<span class="hljs-string">\'*\'</span>: P(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>), **{id_: P(W//<span class="hljs-number">2</span>, H//<span class="hljs-number">2</span>) <span class="hljs-keyword">for</span> id_ <span class="hljs-keyword">in</span> range(<span class="hljs-number">10</span>)}}\n' +
+  '    moves = asyncio.Queue()\n' +
+  '    coros = (*(random_controller(id_, moves) <span class="hljs-keyword">for</span> id_ <span class="hljs-keyword">in</span> range(<span class="hljs-number">10</span>)),\n' +
+  '             human_controller(screen, moves), model(moves, state), view(state, screen))\n' +
+  '    <span class="hljs-keyword">await</span> asyncio.wait(coros, return_when=asyncio.FIRST_COMPLETED)\n' +
+  '\n' +
+  '<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">random_controller</span><span class="hljs-params">(id_, moves)</span>:</span>\n' +
+  '    <span class="hljs-keyword">while</span> <span class="hljs-keyword">True</span>:\n' +
+  '        d = random.choice(list(D))\n' +
+  '        moves.put_nowait((id_, d))\n' +
+  '        <span class="hljs-keyword">await</span> asyncio.sleep(random.triangular(<span class="hljs-number">0.01</span>, <span class="hljs-number">0.65</span>))\n' +
+  '\n' +
+  '<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">human_controller</span><span class="hljs-params">(screen, moves)</span>:</span>\n' +
+  '    <span class="hljs-keyword">while</span> <span class="hljs-keyword">True</span>:\n' +
+  '        ch = screen.getch()\n' +
+  '        key_mappings = {<span class="hljs-number">258</span>: D.s, <span class="hljs-number">259</span>: D.n, <span class="hljs-number">260</span>: D.w, <span class="hljs-number">261</span>: D.e}\n' +
+  '        <span class="hljs-keyword">if</span> ch <span class="hljs-keyword">in</span> key_mappings:\n' +
+  '            moves.put_nowait((<span class="hljs-string">\'*\'</span>, key_mappings[ch]))\n' +
+  '        <span class="hljs-keyword">await</span> asyncio.sleep(<span class="hljs-number">0.005</span>)\n' +
+  '\n' +
+  '<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">model</span><span class="hljs-params">(moves, state)</span>:</span>\n' +
+  '    <span class="hljs-keyword">while</span> state[<span class="hljs-string">\'*\'</span>] <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> (state[id_] <span class="hljs-keyword">for</span> id_ <span class="hljs-keyword">in</span> range(<span class="hljs-number">10</span>)):\n' +
+  '        id_, d = <span class="hljs-keyword">await</span> moves.get()\n' +
+  '        x, y   = state[id_]\n' +
+  '        deltas = {D.n: P(<span class="hljs-number">0</span>, <span class="hljs-number">-1</span>), D.e: P(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>), D.s: P(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>), D.w: P(<span class="hljs-number">-1</span>, <span class="hljs-number">0</span>)}\n' +
+  '        state[id_] = P((x + deltas[d].x) % W, (y + deltas[d].y) % H)\n' +
+  '\n' +
+  '<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">view</span><span class="hljs-params">(state, screen)</span>:</span>\n' +
+  '    offset = P(curses.COLS//<span class="hljs-number">2</span> - W//<span class="hljs-number">2</span>, curses.LINES//<span class="hljs-number">2</span> - H//<span class="hljs-number">2</span>)\n' +
+  '    <span class="hljs-keyword">while</span> <span class="hljs-keyword">True</span>:\n' +
+  '        screen.erase()\n' +
+  '        curses.textpad.rectangle(screen, offset.y-<span class="hljs-number">1</span>, offset.x-<span class="hljs-number">1</span>, offset.y+H, offset.x+W)\n' +
+  '        <span class="hljs-keyword">for</span> id_, p <span class="hljs-keyword">in</span> state.items():\n' +
+  '            screen.addstr(offset.y + (p.y - state[<span class="hljs-string">\'*\'</span>].y + H//<span class="hljs-number">2</span>) % H,\n' +
+  '                          offset.x + (p.x - state[<span class="hljs-string">\'*\'</span>].x + W//<span class="hljs-number">2</span>) % W, str(id_))\n' +
+  '        <span class="hljs-keyword">await</span> asyncio.sleep(<span class="hljs-number">0.005</span>)\n' +
+  '\n' +
+  '<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">\'__main__\'</span>:\n' +
+  '    curses.wrapper(main)\n';
+
 const PROGRESS_BAR =
   '<span class="hljs-comment"># $ pip3 install tqdm</span>\n' +
   '<span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-keyword">from</span> tqdm <span class="hljs-keyword">import</span> tqdm\n' +
@@ -87,6 +166,81 @@ const PROGRESS_BAR =
   '<span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-keyword">for</span> el <span class="hljs-keyword">in</span> tqdm([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>], desc=<span class="hljs-string">\'Processing\'</span>):\n' +
   '<span class="hljs-meta">... </span>    sleep(<span class="hljs-number">1</span>)\n' +
   'Processing: 100%|████████████████████| 3/3 [00:03&lt;00:00,  1.00s/it]\n';
+
+const MARIO =
+  '<span class="hljs-keyword">import</span> collections, dataclasses, enum, io, itertools <span class="hljs-keyword">as</span> it, pygame <span class="hljs-keyword">as</span> pg, urllib.request\n' +
+  '<span class="hljs-keyword">from</span> random <span class="hljs-keyword">import</span> randint\n' +
+  '\n' +
+  'P = collections.namedtuple(<span class="hljs-string">\'P\'</span>, <span class="hljs-string">\'x y\'</span>)          <span class="hljs-comment"># Position</span>\n' +
+  'D = enum.Enum(<span class="hljs-string">\'D\'</span>, <span class="hljs-string">\'n e s w\'</span>)                   <span class="hljs-comment"># Direction</span>\n' +
+  'W, H, MAX_S = <span class="hljs-number">50</span>, <span class="hljs-number">50</span>, P(<span class="hljs-number">5</span>, <span class="hljs-number">10</span>)                  <span class="hljs-comment"># Width, Height, Max speed</span>\n' +
+  '\n' +
+  '<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">main</span><span class="hljs-params">()</span>:</span>\n' +
+  '    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">get_screen</span><span class="hljs-params">()</span>:</span>\n' +
+  '        pg.init()\n' +
+  '        <span class="hljs-keyword">return</span> pg.display.set_mode((W*<span class="hljs-number">16</span>, H*<span class="hljs-number">16</span>))\n' +
+  '    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">get_images</span><span class="hljs-params">()</span>:</span>\n' +
+  '        url = <span class="hljs-string">\'https://gto76.github.io/python-cheatsheet/web/mario_bros.png\'</span>\n' +
+  '        img = pg.image.load(io.BytesIO(urllib.request.urlopen(url).read()))\n' +
+  '        <span class="hljs-keyword">return</span> [img.subsurface(get_rect(x, <span class="hljs-number">0</span>)) <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> range(img.get_width() // <span class="hljs-number">16</span>)]\n' +
+  '    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">get_mario</span><span class="hljs-params">()</span>:</span>\n' +
+  '        Mario = dataclasses.make_dataclass(<span class="hljs-string">\'Mario\'</span>, <span class="hljs-string">\'rect spd facing_left frame_cycle\'</span>.split())\n' +
+  '        <span class="hljs-keyword">return</span> Mario(get_rect(<span class="hljs-number">1</span>, <span class="hljs-number">1</span>), P(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>), <span class="hljs-keyword">False</span>, it.cycle(range(<span class="hljs-number">3</span>)))\n' +
+  '    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">get_tiles</span><span class="hljs-params">()</span>:</span>\n' +
+  '        border = [(x, y) <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> range(W) <span class="hljs-keyword">for</span> y <span class="hljs-keyword">in</span> range(H) <span class="hljs-keyword">if</span> x <span class="hljs-keyword">in</span> [<span class="hljs-number">0</span>, W-<span class="hljs-number">1</span>] <span class="hljs-keyword">or</span> y <span class="hljs-keyword">in</span> [<span class="hljs-number">0</span>, H-<span class="hljs-number">1</span>]]\n' +
+  '        platforms = [(randint(<span class="hljs-number">1</span>, W-<span class="hljs-number">2</span>), randint(<span class="hljs-number">2</span>, H-<span class="hljs-number">2</span>)) <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> range(W*H // <span class="hljs-number">10</span>)]\n' +
+  '        <span class="hljs-keyword">return</span> [get_rect(x, y) <span class="hljs-keyword">for</span> x, y <span class="hljs-keyword">in</span> border + platforms]\n' +
+  '    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">get_rect</span><span class="hljs-params">(x, y)</span>:</span>\n' +
+  '        <span class="hljs-keyword">return</span> pg.Rect(x*<span class="hljs-number">16</span>, y*<span class="hljs-number">16</span>, <span class="hljs-number">16</span>, <span class="hljs-number">16</span>)\n' +
+  '    run(get_screen(), get_images(), get_mario(), get_tiles())\n' +
+  '\n' +
+  '<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">run</span><span class="hljs-params">(screen, images, mario, tiles)</span>:</span>\n' +
+  '    clock = pg.time.Clock()\n' +
+  '    <span class="hljs-keyword">while</span> all(event.type != pg.QUIT <span class="hljs-keyword">for</span> event <span class="hljs-keyword">in</span> pg.event.get()):\n' +
+  '        keys = {pg.K_UP: D.n, pg.K_RIGHT: D.e, pg.K_DOWN: D.s, pg.K_LEFT: D.w}\n' +
+  '        pressed = {keys.get(ch) <span class="hljs-keyword">for</span> ch, is_prsd <span class="hljs-keyword">in</span> enumerate(pg.key.get_pressed()) <span class="hljs-keyword">if</span> is_prsd}\n' +
+  '        update_speed(mario, tiles, pressed)\n' +
+  '        update_position(mario, tiles)\n' +
+  '        draw(screen, images, mario, tiles, pressed)\n' +
+  '        clock.tick(<span class="hljs-number">28</span>)\n' +
+  '\n' +
+  '<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">update_speed</span><span class="hljs-params">(mario, tiles, pressed)</span>:</span>\n' +
+  '    x, y = mario.spd\n' +
+  '    x += <span class="hljs-number">2</span> * ((D.e <span class="hljs-keyword">in</span> pressed) - (D.w <span class="hljs-keyword">in</span> pressed))\n' +
+  '    x -= (x &gt; <span class="hljs-number">0</span>) - (x &lt; <span class="hljs-number">0</span>)\n' +
+  '    y += <span class="hljs-number">1</span> <span class="hljs-keyword">if</span> D.s <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> get_boundaries(mario.rect, tiles) <span class="hljs-keyword">else</span> (D.n <span class="hljs-keyword">in</span> pressed) * <span class="hljs-number">-10</span>\n' +
+  '    mario.spd = P(x=max(-MAX_S.x, min(MAX_S.x, x)), y=max(-MAX_S.y, min(MAX_S.y, y)))\n' +
+  '\n' +
+  '<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">update_position</span><span class="hljs-params">(mario, tiles)</span>:</span>\n' +
+  '    x, y = mario.rect.topleft\n' +
+  '    n_steps = max(abs(s) <span class="hljs-keyword">for</span> s <span class="hljs-keyword">in</span> mario.spd)\n' +
+  '    <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> range(n_steps):\n' +
+  '        mario.spd = stop_on_collision(mario.spd, get_boundaries(mario.rect, tiles))\n' +
+  '        x, y = x + mario.spd.x / n_steps, y + mario.spd.y / n_steps\n' +
+  '        mario.rect.topleft = x, y\n' +
+  '\n' +
+  '<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">get_boundaries</span><span class="hljs-params">(rect, tiles)</span>:</span>\n' +
+  '    deltas = {D.n: P(<span class="hljs-number">0</span>, <span class="hljs-number">-1</span>), D.e: P(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>), D.s: P(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>), D.w: P(<span class="hljs-number">-1</span>, <span class="hljs-number">0</span>)}\n' +
+  '    <span class="hljs-keyword">return</span> {d <span class="hljs-keyword">for</span> d, delta <span class="hljs-keyword">in</span> deltas.items() <span class="hljs-keyword">if</span> rect.move(delta).collidelist(tiles) != <span class="hljs-number">-1</span>}\n' +
+  '\n' +
+  '<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">stop_on_collision</span><span class="hljs-params">(spd, bounds)</span>:</span>\n' +
+  '    <span class="hljs-keyword">return</span> P(x=<span class="hljs-number">0</span> <span class="hljs-keyword">if</span> (D.w <span class="hljs-keyword">in</span> bounds <span class="hljs-keyword">and</span> spd.x &lt; <span class="hljs-number">0</span>) <span class="hljs-keyword">or</span> (D.e <span class="hljs-keyword">in</span> bounds <span class="hljs-keyword">and</span> spd.x &gt; <span class="hljs-number">0</span>) <span class="hljs-keyword">else</span> spd.x,\n' +
+  '             y=<span class="hljs-number">0</span> <span class="hljs-keyword">if</span> (D.n <span class="hljs-keyword">in</span> bounds <span class="hljs-keyword">and</span> spd.y &lt; <span class="hljs-number">0</span>) <span class="hljs-keyword">or</span> (D.s <span class="hljs-keyword">in</span> bounds <span class="hljs-keyword">and</span> spd.y &gt; <span class="hljs-number">0</span>) <span class="hljs-keyword">else</span> spd.y)\n' +
+  '\n' +
+  '<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">draw</span><span class="hljs-params">(screen, images, mario, tiles, pressed)</span>:</span>\n' +
+  '    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">get_marios_image_index</span><span class="hljs-params">()</span>:</span>\n' +
+  '        <span class="hljs-keyword">if</span> D.s <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> get_boundaries(mario.rect, tiles):\n' +
+  '            <span class="hljs-keyword">return</span> <span class="hljs-number">4</span>\n' +
+  '        <span class="hljs-keyword">return</span> next(mario.frame_cycle) <span class="hljs-keyword">if</span> {D.w, D.e} &amp; pressed <span class="hljs-keyword">else</span> <span class="hljs-number">6</span>\n' +
+  '    screen.fill((<span class="hljs-number">85</span>, <span class="hljs-number">168</span>, <span class="hljs-number">255</span>))\n' +
+  '    mario.facing_left = (D.w <span class="hljs-keyword">in</span> pressed) <span class="hljs-keyword">if</span> {D.w, D.e} &amp; pressed <span class="hljs-keyword">else</span> mario.facing_left\n' +
+  '    screen.blit(images[get_marios_image_index() + mario.facing_left * <span class="hljs-number">9</span>], mario.rect)\n' +
+  '    <span class="hljs-keyword">for</span> t <span class="hljs-keyword">in</span> tiles:\n' +
+  '        screen.blit(images[<span class="hljs-number">18</span> <span class="hljs-keyword">if</span> t.x <span class="hljs-keyword">in</span> [<span class="hljs-number">0</span>, (W-<span class="hljs-number">1</span>)*<span class="hljs-number">16</span>] <span class="hljs-keyword">or</span> t.y <span class="hljs-keyword">in</span> [<span class="hljs-number">0</span>, (H-<span class="hljs-number">1</span>)*<span class="hljs-number">16</span>] <span class="hljs-keyword">else</span> <span class="hljs-number">19</span>], t)\n' +
+  '    pg.display.flip()\n' +
+  '\n' +
+  '<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">\'__main__\'</span>:\n' +
+  '    main()\n';
 
 const PYINSTALLER =
   '$ pip3 install pyinstaller\n' +
@@ -106,15 +260,6 @@ const DIAGRAM_1_A =
   '|                  |  Iterable  | Collection |  Sequence  |\n' +
   '+------------------+------------+------------+------------+\n';
 
-// const DIAGRAM_1_B =
-//   '┏━━━━━━━━━━━━━━━━━━┯━━━━━━━━━━━━┯━━━━━━━━━━━━┯━━━━━━━━━━━━┓\n' +
-//   '┃                  │  Sequence  │ Collection │  Iterable  ┃\n' +
-//   '┠──────────────────┼────────────┼────────────┼────────────┨\n' +
-//   '┃ list, range, str │     ✓      │     ✓      │     ✓      ┃\n' +
-//   '┃ dict, set        │            │     ✓      │     ✓      ┃\n' +
-//   '┃ iter             │            │            │     ✓      ┃\n' +
-//   '┗━━━━━━━━━━━━━━━━━━┷━━━━━━━━━━━━┷━━━━━━━━━━━━┷━━━━━━━━━━━━┛\n';
-
 const DIAGRAM_1_B =
 '┏━━━━━━━━━━━━━━━━━━┯━━━━━━━━━━━━┯━━━━━━━━━━━━┯━━━━━━━━━━━━┓\n' +
 '┃                  │  Iterable  │ Collection │  Sequence  ┃\n' +
@@ -128,17 +273,6 @@ const DIAGRAM_2_A =
   '+--------------------+----------+----------+----------+----------+----------+\n' +
   '|                    |  Number  |  Complex |   Real   | Rational | Integral |\n' +
   '+--------------------+----------+----------+----------+----------+----------+\n';
-
-// const DIAGRAM_2_B =
-//   '┏━━━━━━━━━━━━━━━━━━━━┯━━━━━━━━━━┯━━━━━━━━━━┯━━━━━━━━━━┯━━━━━━━━━━┯━━━━━━━━━━┓\n' +
-//   '┃                    │ Integral │ Rational │   Real   │ Complex  │  Number  ┃\n' +
-//   '┠────────────────────┼──────────┼──────────┼──────────┼──────────┼──────────┨\n' +
-//   '┃ int                │    ✓     │    ✓     │    ✓     │    ✓     │    ✓     ┃\n' +
-//   '┃ fractions.Fraction │          │    ✓     │    ✓     │    ✓     │    ✓     ┃\n' +
-//   '┃ float              │          │          │    ✓     │    ✓     │    ✓     ┃\n' +
-//   '┃ complex            │          │          │          │    ✓     │    ✓     ┃\n' +
-//   '┃ decimal.Decimal    │          │          │          │          │    ✓     ┃\n' +
-//   '┗━━━━━━━━━━━━━━━━━━━━┷━━━━━━━━━━┷━━━━━━━━━━┷━━━━━━━━━━┷━━━━━━━━━━┷━━━━━━━━━━┛\n';
 
 const DIAGRAM_2_B =
   '┏━━━━━━━━━━━━━━━━━━━━┯━━━━━━━━━━┯━━━━━━━━━━┯━━━━━━━━━━┯━━━━━━━━━━┯━━━━━━━━━━┓\n' +
@@ -181,14 +315,8 @@ const DIAGRAM_4_B =
   "┃  0.56789     │   '0.56789'    │    '0.567890'  │ '5.678900e-01' │   '56.789000%' ┃\n" +
   "┃  5.6789      │   '5.6789'     │    '5.678900'  │ '5.678900e+00' │  '567.890000%' ┃\n" +
   "┃ 56.789       │  '56.789'      │   '56.789000'  │ '5.678900e+01' │ '5678.900000%' ┃\n" +
-  "┗━━━━━━━━━━━━━━┷━━━━━━━━━━━━━━━━┷━━━━━━━━━━━━━━━━┷━━━━━━━━━━━━━━━━┷━━━━━━━━━━━━━━━━┛\n";
-
-const DIAGRAM_5_A =
-  "+--------------+----------------+----------------+----------------+----------------+\n" +
-  "|              |  {<float>:.2}  |  {<float>:.2f} |  {<float>:.2e} |  {<float>:.2%} |\n" +
-  "+--------------+----------------+----------------+----------------+----------------+\n";
-
-const DIAGRAM_5_B =
+  "┗━━━━━━━━━━━━━━┷━━━━━━━━━━━━━━━━┷━━━━━━━━━━━━━━━━┷━━━━━━━━━━━━━━━━┷━━━━━━━━━━━━━━━━┛\n" +
+  "\n" +
   "┏━━━━━━━━━━━━━━┯━━━━━━━━━━━━━━━━┯━━━━━━━━━━━━━━━━┯━━━━━━━━━━━━━━━━┯━━━━━━━━━━━━━━━━┓\n" +
   "┃              │  {&lt;float&gt;:.2}  │  {&lt;float&gt;:.2f} │  {&lt;float&gt;:.2e} │  {&lt;float&gt;:.2%} ┃\n" +
   "┠──────────────┼────────────────┼────────────────┼────────────────┼────────────────┨\n" +
@@ -200,6 +328,11 @@ const DIAGRAM_5_B =
   "┃  5.6789      │    '5.7'       │      '5.68'    │   '5.68e+00'   │    '567.89%'   ┃\n" +
   "┃ 56.789       │    '5.7e+01'   │     '56.79'    │   '5.68e+01'   │   '5678.90%'   ┃\n" +
   "┗━━━━━━━━━━━━━━┷━━━━━━━━━━━━━━━━┷━━━━━━━━━━━━━━━━┷━━━━━━━━━━━━━━━━┷━━━━━━━━━━━━━━━━┛\n";
+
+const DIAGRAM_5_A =
+  "+--------------+----------------+----------------+----------------+----------------+\n" +
+  "|              |  {<float>:.2}  |  {<float>:.2f} |  {<float>:.2e} |  {<float>:.2%} |\n" +
+  "+--------------+----------------+----------------+----------------+----------------+\n";
 
 const DIAGRAM_6_A =
   '+------------+------------+------------+------------+--------------+\n' +
@@ -230,12 +363,14 @@ const DIAGRAM_7_B =
   " └── Exception                    <span class='hljs-comment'># User-defined exceptions should be derived from this class.</span>\n" +
   "      ├── ArithmeticError         <span class='hljs-comment'># Base class for arithmetic errors.</span>\n" +
   "      │    └── ZeroDivisionError  <span class='hljs-comment'># Raised when dividing by zero.</span>\n" +
+  "      ├── AssertionError          <span class='hljs-comment'># Raised by `assert &lt;exp&gt;` if expression returns false value.</span>\n" +
   "      ├── AttributeError          <span class='hljs-comment'># Raised when an attribute is missing.</span>\n" +
   "      ├── EOFError                <span class='hljs-comment'># Raised by input() when it hits end-of-file condition.</span>\n" +
   "      ├── LookupError             <span class='hljs-comment'># Raised when a look-up on a collection fails.</span>\n" +
   "      │    ├── IndexError         <span class='hljs-comment'># Raised when a sequence index is out of range.</span>\n" +
-  "      │    └── KeyError           <span class='hljs-comment'># Raised when a dictionary key or set element is not found.</span>\n" +
-  "      ├── NameError               <span class='hljs-comment'># Raised when a variable name is not found.</span>\n" +
+  "      │    └── KeyError           <span class='hljs-comment'># Raised when a dictionary key or set element is missing.</span>\n" +
+  "      ├── MemoryError             <span class='hljs-comment'># Out of memory. Could be too late to start deleting vars.</span>\n" +
+  "      ├── NameError               <span class='hljs-comment'># Raised when an object is missing.</span>\n" +
   "      ├── OSError                 <span class='hljs-comment'># Errors such as “file not found” or “disk full” (see Open).</span>\n" +
   "      │    └── FileNotFoundError  <span class='hljs-comment'># When a file or directory is requested but doesn't exist.</span>\n" +
   "      ├── RuntimeError            <span class='hljs-comment'># Raised by errors that don't fall into other categories.</span>\n" +
@@ -346,6 +481,9 @@ const DIAGRAM_13_B =
   "┃ sr.transform(…) │     y  2    │   y     2   │       y  2    ┃\n" +
   "┗━━━━━━━━━━━━━━━━━┷━━━━━━━━━━━━━┷━━━━━━━━━━━━━┷━━━━━━━━━━━━━━━┛\n";
 
+const DIAGRAM_14_A =
+  "|                 |    'rank'   |   ['rank']  | {'r': 'rank'} |";
+
 const DIAGRAM_15_A =
   '+------------------------+---------------+------------+------------+--------------------------+';
 
@@ -400,6 +538,9 @@ const DIAGRAM_16_B =
   "┃ df.transform(…) │   b  2  2   │ a    1    1 │     b  2      ┃\n" +
   "┃                 │             │ b    2    2 │               ┃\n" +
   "┗━━━━━━━━━━━━━━━━━┷━━━━━━━━━━━━━┷━━━━━━━━━━━━━┷━━━━━━━━━━━━━━━┛\n";
+
+const DIAGRAM_17_A =
+  "|                 |    'rank'   |   ['rank']  | {'x': 'rank'} |";
 
 const DIAGRAM_18_A =
   '| gb.agg(…)       |      x   y  |      x  y   |      x    y |        x      |';
@@ -461,6 +602,8 @@ function main() {
 function getMd() {
   var readme = readFile('README.md');
   var readme = readme.replace("#semaphore-event-barrier", "#semaphoreeventbarrier");
+  var readme = readme.replace("#semaphore-event-barrier", "#semaphoreeventbarrier");
+  var readme = readme.replace("#dataframe-plot-encode-decode", "#dataframeplotencodedecode");
   const converter = new showdown.Converter();
   return converter.makeHtml(readme);
 }
@@ -484,6 +627,8 @@ function modifyPage() {
   highlightCode();
   fixPandasDiagram();
   removePlotImages();
+  fixABCSequenceDiv();
+  fixStructFormatDiv();
 }
 
 function changeMenu() {
@@ -527,7 +672,7 @@ function updateDiagrams() {
   $(`code:contains(${DIAGRAM_2_A})`).html(DIAGRAM_2_B);
   $(`code:contains(${DIAGRAM_3_A})`).html(DIAGRAM_3_B);
   $(`code:contains(${DIAGRAM_4_A})`).html(DIAGRAM_4_B);
-  $(`code:contains(${DIAGRAM_5_A})`).html(DIAGRAM_5_B);
+  $(`code:contains(${DIAGRAM_5_A})`).parent().remove();
   $(`code:contains(${DIAGRAM_6_A})`).html(DIAGRAM_6_B);
   $(`code:contains(${DIAGRAM_7_A})`).html(DIAGRAM_7_B);
   $(`code:contains(${DIAGRAM_8_A})`).html(DIAGRAM_8_B);
@@ -536,8 +681,10 @@ function updateDiagrams() {
   $(`code:contains(${DIAGRAM_11_A})`).html(DIAGRAM_11_B);
   $(`code:contains(${DIAGRAM_12_A})`).html(DIAGRAM_12_B).removeClass("text").removeClass("language-text").addClass("python");
   $(`code:contains(${DIAGRAM_13_A})`).html(DIAGRAM_13_B).removeClass("text").removeClass("language-text").addClass("python");
+  $(`code:contains(${DIAGRAM_14_A})`).parent().remove();
   $(`code:contains(${DIAGRAM_15_A})`).html(DIAGRAM_15_B).removeClass("text").removeClass("language-text").addClass("python");
   $(`code:contains(${DIAGRAM_16_A})`).html(DIAGRAM_16_B).removeClass("text").removeClass("language-text").addClass("python");
+  $(`code:contains(${DIAGRAM_17_A})`).parent().remove();
   $(`code:contains(${DIAGRAM_18_A})`).html(DIAGRAM_18_B).removeClass("text").removeClass("language-text").addClass("python");
 }
 
@@ -568,13 +715,18 @@ function fixClasses() {
 
 function fixHighlights() {
   $(`code:contains(@lru_cache(maxsize=None))`).html(LRU_CACHE);
+  $(`code:contains(@debug(print_result=True))`).html(PARAMETRIZED_DECORATOR);
   $(`code:contains((self, a=None):)`).html(CONSTRUCTOR_OVERLOADING);
+  $(`code:contains(print/str/repr([<el>]))`).html(REPR_USE_CASES);
   $(`code:contains(make_dataclass(\'<class_name>\')`).html(DATACLASS);
   $(`code:contains(shutil.copy)`).html(SHUTIL_COPY);
   $(`code:contains(os.rename)`).html(OS_RENAME);
+  $(`code:contains(\'<n>s\')`).html(STRUCT_FORMAT);
   $(`code:contains(\'<class_name>\', <tuple_of_parents>, <dict_of_class_attributes>)`).html(TYPE);
   $(`code:contains(ValueError: malformed node)`).html(EVAL);
+  $(`code:contains(import asyncio, collections, curses, curses.textpad, enum, random)`).html(COROUTINES);
   $(`code:contains(pip3 install tqdm)`).html(PROGRESS_BAR);
+  $(`code:contains(collections, dataclasses, enum, io, itertools)`).html(MARIO);
   $(`code:contains(pip3 install pyinstaller)`).html(PYINSTALLER);
   $(`ul:contains(Only available in)`).html(INDEX);
 }
@@ -630,6 +782,16 @@ function fixPandasDiagram() {
 function removePlotImages() {
   $('img[alt="Covid Deaths"]').remove();
   $('img[alt="Covid Cases"]').remove();
+}
+
+function fixABCSequenceDiv() {
+  $('#abcsequence').parent().insertBefore($('#tableofrequiredandautomaticallyavailablespecialmethods').parent())
+}
+
+function fixStructFormatDiv() {
+  const div = $('#format-2').parent()
+  $('#format-2').insertBefore(div)
+  $('#forstandardtypesizesandmanualalignmentpaddingstartformatstringwith').parent().insertBefore(div)
 }
 
 function updateDate(template) {
