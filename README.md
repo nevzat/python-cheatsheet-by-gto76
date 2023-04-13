@@ -601,7 +601,7 @@ from dateutil.tz import UTC, tzlocal, gettz, datetime_exists, resolve_imaginary
 <D>  = date(year, month, day)               # Only accepts valid dates from 1 to 9999 AD.
 <T>  = time(hour=0, minute=0, second=0)     # Also: `microsecond=0, tzinfo=None, fold=0`.
 <DT> = datetime(year, month, day, hour=0)   # Also: `minute=0, second=0, microsecond=0, …`.
-<TD> = timedelta(weeks=0, days=0, hours=0)  # Also: `minutes=0, seconds=0, microsecond=0`.
+<TD> = timedelta(weeks=0, days=0, hours=0)  # Also: `minutes=0, seconds=0, microseconds=0`.
 ```
 * **Use `'<D/DT>.weekday()'` to get the day of the week as an int, with Monday being 0.**
 * **`'fold=1'` means the second pass in case of time jumping back for one hour.**
@@ -633,7 +633,7 @@ from dateutil.tz import UTC, tzlocal, gettz, datetime_exists, resolve_imaginary
 <DTn>    = DT.fromtimestamp(<real>)         # Local time DTn from seconds since the Epoch.
 <DTa>    = DT.fromtimestamp(<real>, <tz.>)  # Aware datetime from seconds since the Epoch.
 ```
-* **ISO strings come in following forms: `'YYYY-MM-DD'`, `'HH:MM:SS.mmmuuu[±HH:MM]'`, or both separated by an arbitrary character. All parts following hours are optional.**
+* **ISO strings come in following forms: `'YYYY-MM-DD'`, `'HH:MM:SS.mmmuuu[±HH:MM]'`, or both separated by an arbitrary character. All parts following the hours are optional.**
 * **Python uses the Unix Epoch: `'1970-01-01 00:00 UTC'`, `'1970-01-01 01:00 CET'`, ...**
 
 ### Decode
@@ -647,11 +647,11 @@ from dateutil.tz import UTC, tzlocal, gettz, datetime_exists, resolve_imaginary
 
 ### Format
 ```python
->>> dt = datetime.strptime('2015-05-14 23:39:00.00 +2000', '%Y-%m-%d %H:%M:%S.%f %z')
+>>> dt = datetime.strptime('2015-05-14 23:39:00.00 +0200', '%Y-%m-%d %H:%M:%S.%f %z')
 >>> dt.strftime("%A, %dth of %B '%y, %I:%M%p %Z")
 "Thursday, 14th of May '15, 11:39PM UTC+02:00"
 ```
-* **`'%Z'` only accepts `'UTC/GMT'` and local timezone's code. `'%z'` also accepts `'±HH:MM'`.**
+* **Format code `'%z'` accepts `'±HH[:]MM'` and returns `'±HHMM'` (or `''` if datetime is naive).**
 * **For abbreviated weekday and month use `'%a'` and `'%b'`.**
 
 ### Arithmetics
@@ -770,11 +770,14 @@ Inline
 
 ### Map, Filter, Reduce
 ```python
+from functools import reduce
+```
+
+```python
 <iter> = map(lambda x: x + 1, range(10))            # Or: iter([1, 2, ..., 10])
 <iter> = filter(lambda x: x > 5, range(10))         # Or: iter([6, 7, 8, 9])
 <obj>  = reduce(lambda out, x: out + x, range(10))  # Or: 45
 ```
-* **Reduce must be imported from the functools module.**
 
 ### Any, All
 ```python
@@ -1046,9 +1049,9 @@ from dataclasses import dataclass, field
 
 @dataclass(order=False, frozen=False)
 class <class_name>:
-    <attr_name_1>: <type>
-    <attr_name_2>: <type> = <default_value>
-    <attr_name_3>: list/dict/set = field(default_factory=list/dict/set)
+    <attr_name>: <type>
+    <attr_name>: <type> = <default_value>
+    <attr_name>: list/dict/set = field(default_factory=list/dict/set)
 ```
 * **Objects can be made [sortable](#sortable) with `'order=True'` and immutable with `'frozen=True'`.**
 * **For object to be [hashable](#hashable), all attributes must be hashable and 'frozen' must be True.**
@@ -1328,13 +1331,13 @@ from enum import Enum, auto
 
 ```python
 class <enum_name>(Enum):
-    <member_name_1> = <value_1>
-    <member_name_2> = <value_2_a>, <value_2_b>
-    <member_name_3> = auto()
+    <member_name> = auto()
+    <member_name> = <value>
+    <member_name> = <value>, <value>
 ```
-* **If there are no numeric values before auto(), it returns 1.**
-* **Otherwise it returns an increment of the last numeric value.**
+* **Function auto() returns an increment of the last numeric value or 1.**
 * **Accessing a member named after a reserved keyword causes SyntaxError.**
+* **Methods receive the member they were called on as the 'self' argument.**
 
 ```python
 <member> = <enum>.<member_name>           # Returns a member.
@@ -1353,7 +1356,7 @@ class <enum_name>(Enum):
 
 ```python
 def get_next_member(member):
-    members = list(member.__class__)
+    members = list(type(member))
     index = members.index(member) + 1
     return members[index % len(members)]
 ```
@@ -1622,31 +1625,31 @@ def write_to_file(filename, text):
 Paths
 -----
 ```python
-from os import getcwd, path, listdir, scandir
-from glob import glob
+import os, glob
+from pathlib import Path
 ```
 
 ```python
-<str>  = getcwd()                   # Returns the current working directory.
-<str>  = path.join(<path>, ...)     # Joins two or more pathname components.
-<str>  = path.abspath(<path>)       # Returns absolute path.
+<str>  = os.getcwd()                # Returns the current working directory.
+<str>  = os.path.join(<path>, ...)  # Joins two or more pathname components.
+<str>  = os.path.realpath(<path>)   # Resolves symlinks and calls path.abspath().
 ```
 
 ```python
-<str>  = path.basename(<path>)      # Returns final component of the path.
-<str>  = path.dirname(<path>)       # Returns path without the final component.
-<tup.> = path.splitext(<path>)      # Splits on last period of the final component.
+<str>  = os.path.basename(<path>)   # Returns final component of the path.
+<str>  = os.path.dirname(<path>)    # Returns path without the final component.
+<tup.> = os.path.splitext(<path>)   # Splits on last period of the final component.
 ```
 
 ```python
-<list> = listdir(path='.')          # Returns filenames located at the path.
-<list> = glob('<pattern>')          # Returns paths matching the wildcard pattern.
+<list> = os.listdir(path='.')       # Returns filenames located at the path.
+<list> = glob.glob('<pattern>')     # Returns paths matching the wildcard pattern.
 ```
 
 ```python
-<bool> = path.exists(<path>)        # Or: <Path>.exists()
-<bool> = path.isfile(<path>)        # Or: <DirEntry/Path>.is_file()
-<bool> = path.isdir(<path>)         # Or: <DirEntry/Path>.is_dir()
+<bool> = os.path.exists(<path>)     # Or: <Path>.exists()
+<bool> = os.path.isfile(<path>)     # Or: <DirEntry/Path>.is_file()
+<bool> = os.path.isdir(<path>)      # Or: <DirEntry/Path>.is_dir()
 ```
 
 ```python
@@ -1658,7 +1661,7 @@ from glob import glob
 **Unlike listdir(), scandir() returns DirEntry objects that cache isfile, isdir and on Windows also stat information, thus significantly increasing the performance of code that requires it.**
 
 ```python
-<iter> = scandir(path='.')          # Returns DirEntry objects located at the path.
+<iter> = os.scandir(path='.')       # Returns DirEntry objects located at the path.
 <str>  = <DirEntry>.path            # Returns the whole path as a string.
 <str>  = <DirEntry>.name            # Returns final component as a string.
 <file> = open(<DirEntry>)           # Opens the file and returns a file object.
@@ -1666,12 +1669,9 @@ from glob import glob
 
 ### Path Object
 ```python
-from pathlib import Path
-```
-
-```python
 <Path> = Path(<path> [, ...])       # Accepts strings, Paths and DirEntry objects.
 <Path> = <path> / <path> [/ ...]    # First or second path must be a Path object.
+<Path> = <Path>.resolve()           # Resolves symlinks and calls <Path>.absolute().
 ```
 
 ```python
@@ -1709,17 +1709,19 @@ import os, shutil, subprocess
 ```python
 os.chdir(<path>)                    # Changes the current working directory.
 os.mkdir(<path>, mode=0o777)        # Creates a directory. Permissions are in octal.
-os.makedirs(<path>, mode=0o777)     # Creates all path's dirs. Also: `exist_ok=False`.
+os.makedirs(<path>, mode=0o777)     # Creates all path's dirs. Also `exist_ok=False`.
 ```
 
 ```python
 shutil.copy(from, to)               # Copies the file. 'to' can exist or be a dir.
+shutil.copy2(from, to)              # Also copies creation and modification time.
 shutil.copytree(from, to)           # Copies the directory. 'to' must not exist.
 ```
 
 ```python
 os.rename(from, to)                 # Renames/moves the file or directory.
-os.replace(from, to)                # Same, but overwrites 'to' if it exists.
+os.replace(from, to)                # Same, but overwrites file 'to' even on Windows.
+shutil.move(from, to)               # Rename() that moves into 'to' if it's a dir.
 ```
 
 ```python
@@ -1933,14 +1935,14 @@ with <conn>.begin(): ...                        # Exits the block with commit or
 ```
 
 ```text
-+------------+--------------+-----------+-----------------------------------+
-| Dialect    | pip3 install | import    | Dependencies                      |
-+------------+--------------+-----------+-----------------------------------+
-| mysql      | mysqlclient  | MySQLdb   | www.pypi.org/project/mysqlclient  |
-| postgresql | psycopg2     | psycopg2  | www.psycopg.org/docs/install.html |
-| mssql      | pyodbc       | pyodbc    | apt install g++ unixodbc-dev      |
-| oracle     | cx_oracle    | cx_Oracle | Oracle Instant Client             |
-+------------+--------------+-----------+-----------------------------------+
++------------+--------------+-----------+----------------------------------+
+| Dialect    | pip3 install | import    | Dependencies                     |
++------------+--------------+-----------+----------------------------------+
+| mysql      | mysqlclient  | MySQLdb   | www.pypi.org/project/mysqlclient |
+| postgresql | psycopg2     | psycopg2  | www.pypi.org/project/psycopg2    |
+| mssql      | pyodbc       | pyodbc    | www.pypi.org/project/pyodbc      |
+| oracle     | oracledb     | oracledb  | www.pypi.org/project/oracledb    |
++------------+--------------+-----------+----------------------------------+
 ```
 
 
@@ -2398,11 +2400,11 @@ Plot
 ```python
 # $ pip3 install matplotlib
 import matplotlib.pyplot as plt
-plt.plot(<x_data>, <y_data> [, label=<str>])   # Or: plt.plot(<y_data>)
-plt.legend()                                   # Adds a legend.
-plt.savefig(<path>)                            # Saves the figure.
-plt.show()                                     # Displays the figure.
-plt.clf()                                      # Clears the figure.
+plt.plot/bar/scatter(x_data, y_data [, label=<str>])  # Or: plt.plot(y_data)
+plt.legend()                                          # Adds a legend.
+plt.savefig(<path>)                                   # Saves the figure.
+plt.show()                                            # Displays the figure.
+plt.clf()                                             # Clears the figure.
 ```
 
 
@@ -2433,12 +2435,13 @@ def main(screen):
         height, width = screen.getmaxyx()
         screen.erase()
         for y, filename in enumerate(paths[first : first+height]):
-            screen.addstr(y, 0, filename[:width-1], A_REVERSE * (filename == paths[selected]))
+            color = A_REVERSE if filename == paths[selected] else 0
+            screen.addstr(y, 0, filename[:width-1], color)
         ch = screen.getch()
         selected += (ch == KEY_DOWN) - (ch == KEY_UP)
         selected = max(0, min(len(paths)-1, selected))
         first += (selected >= first + height) - (selected < first)
-        if ch in [KEY_LEFT, KEY_RIGHT, KEY_ENTER, 10, 13]:
+        if ch in [KEY_LEFT, KEY_RIGHT, KEY_ENTER, ord('\n'), ord('\r')]:
             new_dir = '..' if ch == KEY_LEFT else paths[selected]
             if os.path.isdir(new_dir):
                 os.chdir(new_dir)
@@ -2477,9 +2480,9 @@ logging.basicConfig(
 <Formatter> = logging.Formatter('<format>')       # Creates a Formatter.
 <Handler> = logging.FileHandler(<path>)           # Creates a Handler.
 <Handler>.setFormatter(<Formatter>)               # Adds Formatter to the Handler.
-<Handler>.setLevel(<str/int>)                     # Processes all messages by default. 
+<Handler>.setLevel(<int/str>)                     # Processes all messages by default.
 <Logger>.addHandler(<Handler>)                    # Adds Handler to the Logger.
-<Logger>.setLevel(<str/int>)                      # What is sent to handlers and parents.
+<Logger>.setLevel(<int/str>)                      # What is sent to handlers and parent.
 ```
 * **Parent logger can be specified by naming the child logger `'<parent>.<name>'`.**
 * **Formatter also supports: pathname, filename, funcName, lineno, thread and process.**
@@ -2495,7 +2498,7 @@ logging.basicConfig(
 >>> logger.addHandler(handler)
 >>> logger.critical('Running out of disk space.')
 CRITICAL:my_module:Running out of disk space.
->>> open('test.log').read()
+>>> print(open('test.log').read())
 2023-02-07 23:21:01,430 CRITICAL:my_module:Running out of disk space.
 ```
 
@@ -2535,11 +2538,11 @@ from flask import Flask, send_from_directory, render_template_string, request
 
 ```python
 app = Flask(__name__)
-app.run()
+app.run(host=None, debug=None)
 ```
-* **Starts the app on `'http://localhost:5000'`.**
-* **A WSGI server like [Waitress](https://flask.palletsprojects.com/en/latest/deploying/waitress/) and a HTTP server such as [Nginx](https://flask.palletsprojects.com/en/latest/deploying/nginx/) are needed to run globally.**
-
+* **Starts the app at `'http://localhost:5000'`. Use `'host="0.0.0.0"'` to run externally.**
+* **Install a WSGI server like [Waitress](https://flask.palletsprojects.com/en/latest/deploying/waitress/) and a HTTP server such as [Nginx](https://flask.palletsprojects.com/en/latest/deploying/nginx/) for better security.**
+* **Debug mode restarts the app whenever script changes and displays errors in the browser.**
 
 ### Static Request
 ```python
@@ -2554,18 +2557,19 @@ def serve_file(filename):
 def serve_html(sport):
     return render_template_string('<h1>{{title}}</h1>', title=sport)
 ```
-* **`'render_template()'` accepts filename of a template stored in 'templates' directory.**
+* **To return an error code use `'abort(<int>)'` and to redirect use `'redirect(<url>)'`.**
+* **`'request.args[<str>]'` returns parameter from the query string (URL part after '?').**
+* **Use `'session[key] = value'` to store session data like username, etc.**
 
 ### REST Request
 ```python
-@app.route('/<sport>/odds', methods=['POST'])
+@app.post('/<sport>/odds')
 def serve_json(sport):
     team = request.form['team']
     return {'team': team, 'odds': [2.09, 3.74, 3.68]}
 ```
-* **To get a parameter from the query string (part after the ?) use `'request.args.get(<str>)'`.**
 
-#### Test:
+#### Starts the app in its own thread and queries it with a post request:
 ```python
 # $ pip3 install requests
 >>> import threading, requests
@@ -2661,14 +2665,14 @@ import numpy as np
 
 ```python
 <array> = np.copy/abs/sqrt/log/int64(<array>)           # Returns new array of the same shape.
-<array> = <array>.sum/max/mean/argmax/all([axis])       # Passed dimension gets aggregated.
+<array> = <array>.sum/max/mean/argmax/all(axis)         # Passed dimension gets aggregated.
 <array> = np.apply_along_axis(<func>, axis, <array>)    # Func can return a scalar or array.
 ```
 
 ```python
 <array> = np.concatenate(<list_of_arrays>, axis=0)      # Links arrays along first axis (rows).
 <array> = np.row_stack/column_stack(<list_of_arrays>)   # Treats 1d arrays as rows or columns.
-<array> = np.tile(<array>, <int/shape>)                 # Multiplies passed array.
+<array> = np.tile/repeat(<array>, <int/list>)           # Tiles array or repeats its elements.
 ```
 * **Shape is a tuple of dimension sizes. A 100x50 RGB image has shape (50, 100, 3).**
 * **Axis is an index of the dimension that gets aggregated. Leftmost dimension has index 0. Summing the RGB image along axis 2 will return a greyscale image with shape (50, 100).**
@@ -2678,14 +2682,14 @@ import numpy as np
 <el>       = <2d_array>[row_index, column_index]        # <3d_a>[table_i, row_i, column_i]
 <1d_view>  = <2d_array>[row_index]                      # <3d_a>[table_i, row_i]
 <1d_view>  = <2d_array>[:, column_index]                # <3d_a>[table_i, :, column_i]
-<2d_view>  = <2d_array>[row_range, column_range]        # <3d_a>[table_i, row_r, column_r]
+<2d_view>  = <2d_array>[rows_slice, columns_slice]      # <3d_a>[table_i, rows_s, columns_s]
 ```
 
 ```perl
-<2d_array> = <2d_array>[row_indexes]                    # <3d_a>[table_i/s, row_is]
-<2d_array> = <2d_array>[:, column_indexes]              # <3d_a>[table_i/s, :, column_is]
-<1d_array> = <2d_array>[row_indexes, column_indexes]    # <3d_a>[table_i/s, row_is, column_is]
-<1d_array> = <2d_array>[row_indexes, column_index]      # <3d_a>[table_i/s, row_is, column_i]
+<2d_array> = <2d_array>[row_indexes]                    # <3d_a>[table_i/is, row_is]
+<2d_array> = <2d_array>[:, column_indexes]              # <3d_a>[table_i/is, :, column_is]
+<1d_array> = <2d_array>[row_indexes, column_indexes]    # <3d_a>[table_i/is, row_is, column_is]
+<1d_array> = <2d_array>[row_indexes, column_index]      # <3d_a>[table_i/is, row_is, column_i]
 ```
 
 ```perl
@@ -2753,7 +2757,7 @@ Image
 -----
 ```python
 # $ pip3 install pillow
-from PIL import Image, ImageFilter, ImageEnhance, ImageDraw
+from PIL import Image, ImageDraw
 ```
 
 ```python
@@ -2761,7 +2765,7 @@ from PIL import Image, ImageFilter, ImageEnhance, ImageDraw
 <Image> = Image.open(<path>)                    # Identifies format based on file contents.
 <Image> = <Image>.convert('<mode>')             # Converts image to the new mode.
 <Image>.save(<path>)                            # Selects format based on the path extension.
-<Image>.show()                                  # Opens image in default preview app.
+<Image>.show()                                  # Opens image in the default preview app.
 ```
 
 ```python
@@ -2773,7 +2777,6 @@ from PIL import Image, ImageFilter, ImageEnhance, ImageDraw
 ```
 
 ```python
-<Image> = <Image>.resize((width, height))       # Use <Image>.width/height for original sizes.
 <Image> = <Image>.filter(<Filter>)              # `<Filter> = ImageFilter.<name>([<args>])`
 <Image> = <Enhance>.enhance(<float>)            # `<Enhance> = ImageEnhance.<name>(<Image>)`
 ```
@@ -2819,6 +2822,7 @@ img.show()
 <ImageDraw>.rectangle((x1, y1, x2, y2))         # To rotate use Image's rotate() and paste().
 <ImageDraw>.polygon((x1, y1, x2, y2, ...))      # Last point gets connected to the first.
 <ImageDraw>.ellipse((x1, y1, x2, y2))           # To rotate use Image's rotate() and paste().
+<ImageDraw>.text((x, y), text, font=<Font>)     # `<Font> = ImageFont.truetype(<path>, size)`
 ```
 * **Use `'fill=<color>'` to set the primary color.**
 * **Use `'width=<int>'` to set the width of lines or contours.**
@@ -3014,13 +3018,14 @@ while not pg.event.get(pg.QUIT):
 ```python
 <Surf> = pg.display.set_mode((width, height))   # Opens new window and returns its surface.
 <Surf> = pg.Surface((width, height))            # New RGB surface. RGBA if `flags=pg.SRCALPHA`.
-<Surf> = pg.image.load('<path>')                # Loads the image. Format depends on source.
+<Surf> = pg.image.load(<path/file>)             # Loads the image. Format depends on source.
+<Surf> = pg.surfarray.make_surface(<np_array>)  # Also `<np_arr> = surfarray.pixels3d(<Surf>)`.
 <Surf> = <Surf>.subsurface(<Rect>)              # Returns a subsurface.
 ```
 
 ```python
 <Surf>.fill(color)                              # Tuple, Color('#rrggbb[aa]') or Color(<name>).
-<Surf>.set_at((x, y), color)                    # Updates pixel.
+<Surf>.set_at((x, y), color)                    # Updates pixel. Also <Surf>.get_at((x, y)).
 <Surf>.blit(<Surf>, (x, y))                     # Draws passed surface to the surface.
 ```
 
@@ -3040,15 +3045,14 @@ rect(<Surf>, color, <Rect>, width=0)            # Also polygon(<Surf>, color, po
 
 ### Font
 ```python
-<Font> = pg.font.SysFont('<name>', size)        # Loads the system font or default if missing.
-<Font> = pg.font.Font('<path>', size)           # Loads the TTF file. Pass None for default.
+<Font> = pg.font.Font(<path/file>, size)        # Loads TTF file. Pass None for default font.
 <Surf> = <Font>.render(text, antialias, color)  # Background color can be specified at the end.
 ```
 
 ### Sound
 ```python
-<Sound> = pg.mixer.Sound('<path>')              # Loads the WAV file.
-<Sound>.play()                                  # Starts playing the sound.
+<Sound> = pg.mixer.Sound(<path/file/bytes>)     # Loads WAV file or array of signed shorts.
+<Sound>.play/stop()                             # Also <Sound>.set_volume(<float>).
 ```
 
 ### Basic Mario Brothers Example
@@ -3160,7 +3164,7 @@ Name: a, dtype: int64
 
 ```python
 <el> = <Sr>[key/index]                         # Or: <Sr>.key
-<Sr> = <Sr>[keys/indexes]                      # Or: <Sr>[<key_range/range>]
+<Sr> = <Sr>[keys/indexes]                      # Or: <Sr>[<keys_slice/slice>]
 <Sr> = <Sr>[bools]                             # Or: <Sr>.i/loc[bools]
 ```
 
@@ -3352,7 +3356,7 @@ plt.show()                                     # Displays the plot. Also plt.sav
 ```python
 <dict> = <DF>.to_dict(['d/l/s/…'])             # Returns columns as dicts, lists or series.
 <str>  = <DF>.to_json/html/csv([<path>])       # Also to_markdown/latex([<path>]).
-<DF>.to_pickle/excel(<path>)                   # Run `$ pip3 install openpyxl` for xlsx files.
+<DF>.to_pickle/excel(<path>)                   # Run `$ pip3 install "pandas[excel]" odfpy`.
 <DF>.to_sql('<table_name>', <connection>)      # Accepts SQLite3 or SQLAlchemy connection.
 ```
 
@@ -3526,7 +3530,7 @@ import <cython_script>
 
 ```python
 cdef <ctype> <var_name> = <el>
-cdef <ctype>[n_elements] <var_name> = [<el_1>, <el_2>, ...]
+cdef <ctype>[n_elements] <var_name> = [<el>, <el>, ...]
 cdef <ctype/void> <func_name>(<ctype> <arg_name>): ...
 ```
 
@@ -3538,7 +3542,7 @@ cdef class <class_name>:
 ```
 
 ```python
-cdef enum <enum_name>: <member_name_1>, <member_name_2>, ...
+cdef enum <enum_name>: <member_name>, <member_name>, ...
 ```
 
 ### PyInstaller

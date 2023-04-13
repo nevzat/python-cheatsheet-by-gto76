@@ -88,11 +88,13 @@ const DATACLASS =
 
 const SHUTIL_COPY =
   'shutil.copy(from, to)               <span class="hljs-comment"># Copies the file. \'to\' can exist or be a dir.</span>\n' +
+  'shutil.copy2(from, to)              <span class="hljs-comment"># Also copies creation and modification time.</span>\n' +
   'shutil.copytree(from, to)           <span class="hljs-comment"># Copies the directory. \'to\' must not exist.</span>\n';
 
 const OS_RENAME =
   'os.rename(from, to)                 <span class="hljs-comment"># Renames/moves the file or directory.</span>\n' +
-  'os.replace(from, to)                <span class="hljs-comment"># Same, but overwrites \'to\' if it exists.</span>\n';
+  'os.replace(from, to)                <span class="hljs-comment"># Same, but overwrites file \'to\' even on Windows.</span>\n' +
+  'shutil.move(from, to)               <span class="hljs-comment"># Rename() that moves into \'to\' if it\'s a dir.</span>\n';
 
 const STRUCT_FORMAT =
   '<span class="hljs-section">\'&lt;n&gt;s\'</span><span class="hljs-attribute"></span>';
@@ -161,6 +163,31 @@ const COROUTINES =
   '<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">\'__main__\'</span>:\n' +
   '    curses.wrapper(main)\n';
 
+const CURSES =
+  '<span class="hljs-keyword">import</span> curses, curses.ascii, os\n' +
+  '<span class="hljs-keyword">from</span> curses <span class="hljs-keyword">import</span> A_REVERSE, KEY_DOWN, KEY_UP, KEY_LEFT, KEY_RIGHT, KEY_ENTER\n' +
+  '\n' +
+  '<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">main</span><span class="hljs-params">(screen)</span>:</span>\n' +
+  '    ch, first, selected, paths = <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, os.listdir()\n' +
+  '    <span class="hljs-keyword">while</span> ch != curses.ascii.ESC:\n' +
+  '        height, width = screen.getmaxyx()\n' +
+  '        screen.erase()\n' +
+  '        <span class="hljs-keyword">for</span> y, filename <span class="hljs-keyword">in</span> enumerate(paths[first : first+height]):\n' +
+  '            color = A_REVERSE <span class="hljs-keyword">if</span> filename == paths[selected] <span class="hljs-keyword">else</span> <span class="hljs-number">0</span>\n' +
+  '            screen.addstr(y, <span class="hljs-number">0</span>, filename[:width-<span class="hljs-number">1</span>], color)\n' +
+  '        ch = screen.getch()\n' +
+  '        selected += (ch == KEY_DOWN) - (ch == KEY_UP)\n' +
+  '        selected = max(<span class="hljs-number">0</span>, min(len(paths)-<span class="hljs-number">1</span>, selected))\n' +
+  '        first += (selected &gt;= first + height) - (selected &lt; first)\n' +
+  '        <span class="hljs-keyword">if</span> ch <span class="hljs-keyword">in</span> [KEY_LEFT, KEY_RIGHT, KEY_ENTER, ord(<span class="hljs-string">\'\\n\'</span>), ord(<span class="hljs-string">\'\\r\'</span>)]:\n' +
+  '            new_dir = <span class="hljs-string">\'..\'</span> <span class="hljs-keyword">if</span> ch == KEY_LEFT <span class="hljs-keyword">else</span> paths[selected]\n' +
+  '            <span class="hljs-keyword">if</span> os.path.isdir(new_dir):\n' +
+  '                os.chdir(new_dir)\n' +
+  '                first, selected, paths = <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, os.listdir()\n' +
+  '\n' +
+  '<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">\'__main__\'</span>:\n' +
+  '    curses.wrapper(main)\n';
+
 const PROGRESS_BAR =
   '<span class="hljs-comment"># $ pip3 install tqdm</span>\n' +
   '<span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-keyword">from</span> tqdm <span class="hljs-keyword">import</span> tqdm\n' +
@@ -178,7 +205,7 @@ const LOGGING_EXAMPLE =
   '<span class="hljs-meta">&gt;&gt;&gt; </span>logger.addHandler(handler)\n' +
   '<span class="hljs-meta">&gt;&gt;&gt; </span>logger.critical(<span class="hljs-string">\'Running out of disk space.\'</span>)\n' +
   'CRITICAL:my_module:Running out of disk space.\n' +
-  '<span class="hljs-meta">&gt;&gt;&gt; </span>open(<span class="hljs-string">\'test.log\'</span>).read()\n' +
+  '<span class="hljs-meta">&gt;&gt;&gt; </span>print(open(<span class="hljs-string">\'test.log\'</span>).read())\n' +
   '2023-02-07 23:21:01,430 CRITICAL:my_module:Running out of disk space.\n';
 
 const AUDIO =
@@ -433,19 +460,19 @@ const DIAGRAM_9_B =
   "┗━━━━━━━━━━━━━━━━━━┷━━━━━━━━━━━━━━┷━━━━━━━━━━━━━━┷━━━━━━━━━━━━━━┛\n";
 
 const DIAGRAM_95_A =
-  "+------------+--------------+-----------+-----------------------------------+\n" +
-  "| Dialect    | pip3 install | import    | Dependencies                      |\n" +
-  "+------------+--------------+-----------+-----------------------------------+\n";
+  "+------------+--------------+-----------+----------------------------------+\n" +
+  "| Dialect    | pip3 install | import    | Dependencies                     |\n" +
+  "+------------+--------------+-----------+----------------------------------+\n";
 
 const DIAGRAM_95_B =
-  "┏━━━━━━━━━━━━┯━━━━━━━━━━━━━━┯━━━━━━━━━━━┯━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n" +
-  "┃ Dialect    │ pip3 install │ import    │ Dependencies                      ┃\n" +
-  "┠────────────┼──────────────┼───────────┼───────────────────────────────────┨\n" +
-  "┃ mysql      │ mysqlclient  │ MySQLdb   │ www.pypi.org/project/mysqlclient  ┃\n" +
-  "┃ postgresql │ psycopg2     │ psycopg2  │ www.psycopg.org/docs/install.html ┃\n" +
-  "┃ mssql      │ pyodbc       │ pyodbc    │ apt install g++ unixodbc-dev      ┃\n" +
-  "┃ oracle     │ cx_oracle    │ cx_Oracle │ Oracle Instant Client             ┃\n" +
-  "┗━━━━━━━━━━━━┷━━━━━━━━━━━━━━┷━━━━━━━━━━━┷━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n";
+  "┏━━━━━━━━━━━━┯━━━━━━━━━━━━━━┯━━━━━━━━━━━┯━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n" +
+  "┃ Dialect    │ pip3 install │ import    │ Dependencies                     ┃\n" +
+  "┠────────────┼──────────────┼───────────┼──────────────────────────────────┨\n" +
+  "┃ mysql      │ mysqlclient  │ MySQLdb   │ www.pypi.org/project/mysqlclient ┃\n" +
+  "┃ postgresql │ psycopg2     │ psycopg2  │ www.pypi.org/project/psycopg2    ┃\n" +
+  "┃ mssql      │ pyodbc       │ pyodbc    │ www.pypi.org/project/pyodbc      ┃\n" +
+  "┃ oracle     │ oracledb     │ oracledb  │ www.pypi.org/project/oracledb    ┃\n" +
+  "┗━━━━━━━━━━━━┷━━━━━━━━━━━━━━┷━━━━━━━━━━━┷━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n";
 
 const DIAGRAM_10_A =
   '+-------------+-------------+\n' +
@@ -767,6 +794,7 @@ function fixHighlights() {
   $(`code:contains(\'<class_name>\', <tuple_of_parents>, <dict_of_class_attributes>)`).html(TYPE);
   $(`code:contains(ValueError: malformed node)`).html(EVAL);
   $(`code:contains(import asyncio, collections, curses, curses.textpad, enum, random)`).html(COROUTINES);
+  $(`code:contains(import curses, curses.ascii, os)`).html(CURSES);
   $(`code:contains(pip3 install tqdm)`).html(PROGRESS_BAR);
   $(`code:contains(>>> logging.basicConfig(level=)`).html(LOGGING_EXAMPLE);
   $(`code:contains(samples_f = (sin(i *)`).html(AUDIO);
