@@ -396,14 +396,12 @@ Format
 <str> = '%s, %s' % (<el_1>, <el_2>)      # Redundant and inferior C-style formatting.
 ```
 
-### Attributes
+### Example
 ```python
 >>> Person = collections.namedtuple('Person', 'name height')
 >>> person = Person('Jean-Luc', 187)
->>> f'{person.height}'
-'187'
->>> '{p.height}'.format(p=person)
-'187'
+>>> f'{person.name} is {person.height / 100} meters tall.'
+'Jean-Luc is 1.87 meters tall.'
 ```
 
 ### General Options
@@ -415,7 +413,8 @@ Format
 {<el>:0}                                 # '<el>'
 ```
 * **Options can be generated dynamically: `f'{<el>:{<str/int>}[…]}'`.**
-* **Adding `'!r'` before the colon converts object to string by calling its [repr()](#class) method.**
+* **Adding `'='` to the expression prepends it to the output: `f'{1+1=}'` returns `'1+1=2'`.**
+* **Adding `'!r'` to the expression converts object to string by calling its [repr()](#class) method.**
 
 ### Strings
 ```python
@@ -657,7 +656,7 @@ from dateutil.tz import UTC, tzlocal, gettz, datetime_exists, resolve_imaginary
 ### Arithmetics
 ```python
 <D/DT>   = <D/DT>  ± <TD>                   # Returned datetime can fall into missing hour.
-<TD>     = <D/DTn> - <D/DTn>                # Returns the difference, ignoring time jumps.
+<TD>     = <D/DTn> - <D/DTn>                # Returns the difference. Ignores time jumps.
 <TD>     = <DTa>   - <DTa>                  # Ignores time jumps if they share tzinfo object.
 <TD>     = <TD>    * <real>                 # Also: <TD> = abs(<TD>) and <TD> = <TD> ±% <TD>.
 <float>  = <TD>    / <TD>                   # How many weeks/years there are in TD. Also //.
@@ -1068,9 +1067,10 @@ from dataclasses import make_dataclass
 
 #### Rest of type annotations (CPython interpreter ignores them all):
 ```python
+import typing as tp, collections.abc as abc
+<var_name>: list/set/abc.Iterable/abc.Sequence/tp.Optional[<type>] [= <obj>]
+<var_name>: dict/tuple/tp.Union[<type>, ...] [= <obj>]
 def func(<arg_name>: <type> [= <obj>]) -> <type>: ...
-<var_name>: typing.List/Set/Iterable/Sequence/Optional[<type>]
-<var_name>: typing.Dict/Tuple/Union[<type>, ...]
 ```
 
 ### Slots
@@ -1446,8 +1446,7 @@ BaseException
  +-- SystemExit                   # Raised by the sys.exit() function.
  +-- KeyboardInterrupt            # Raised when the user hits the interrupt key (ctrl-c).
  +-- Exception                    # User-defined exceptions should be derived from this class.
-      +-- ArithmeticError         # Base class for arithmetic errors.
-      |    +-- ZeroDivisionError  # Raised when dividing by zero.
+      +-- ArithmeticError         # Base class for arithmetic errors such as ZeroDivisionError.
       +-- AssertionError          # Raised by `assert <exp>` if expression returns false value.
       +-- AttributeError          # Raised when object doesn't have requested attribute/method.
       +-- EOFError                # Raised by input() when it hits an end-of-file condition.
@@ -1457,13 +1456,14 @@ BaseException
       +-- MemoryError             # Out of memory. Could be too late to start deleting vars.
       +-- NameError               # Raised when nonexistent name (variable/func/class) is used.
       |    +-- UnboundLocalError  # Raised when local name is used before it's being defined.
-      +-- OSError                 # Errors such as FileExistsError/PermissionError (see Open).
+      +-- OSError                 # Errors such as FileExistsError/PermissionError (see #Open).
+      |    +-- ConnectionError    # Errors such as BrokenPipeError/ConnectionAbortedError.
       +-- RuntimeError            # Raised by errors that don't fall into other categories.
+      |    +-- NotImplementedErr  # Can be raised by abstract methods or by unfinished code.
       |    +-- RecursionError     # Raised when the maximum recursion depth is exceeded.
       +-- StopIteration           # Raised by next() when run on an empty iterator.
       +-- TypeError               # Raised when an argument is of the wrong type.
       +-- ValueError              # When argument has the right type but inappropriate value.
-           +-- UnicodeError       # Raised when encoding/decoding strings to/from bytes fails.
 ```
 
 #### Collections and their exceptions:
@@ -2118,8 +2118,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 #### Or:
 ```python
-with <lock>:                                   # Enters the block by calling acquire(),
-    ...                                        # and exits it with release(), even on error.
+with <lock>:                                   # Enters the block by calling acquire() and
+    ...                                        # exits it with release(), even on error.
 ```
 
 ### Semaphore, Event, Barrier
@@ -2129,36 +2129,32 @@ with <lock>:                                   # Enters the block by calling acq
 <Barrier>   = Barrier(n_times)                 # Wait() blocks until it's called n_times.
 ```
 
-### Thread Pool Executor
-* **Object that manages thread execution.**
-* **An object with the same interface called ProcessPoolExecutor provides true parallelism by running a separate interpreter in each process. All arguments must be [pickable](#pickle).**
-
-```python
-<Exec> = ThreadPoolExecutor(max_workers=None)  # Or: `with ThreadPoolExecutor() as <name>: …`
-<Exec>.shutdown(wait=True)                     # Blocks until all threads finish executing.
-```
-
-```python
-<iter> = <Exec>.map(<func>, <args_1>, ...)     # A multithreaded and non-lazy map().
-<Futr> = <Exec>.submit(<func>, <arg_1>, ...)   # Starts a thread and returns its Future object.
-<bool> = <Futr>.done()                         # Checks if the thread has finished executing.
-<obj>  = <Futr>.result()                       # Waits for thread to finish and returns result.
-<iter> = as_completed(<coll_of_Futr>)          # Each Future is yielded as it completes.
-```
-
 ### Queue
-**A thread-safe FIFO queue. For LIFO queue use LifoQueue.**
 ```python
-from queue import Queue
-<Queue> = Queue(maxsize=0)
-```
-
-```python
+<Queue> = queue.Queue(maxsize=0)               # A thread-safe FIFO queue. Also LifoQueue.
 <Queue>.put(<el>)                              # Blocks until queue stops being full.
 <Queue>.put_nowait(<el>)                       # Raises queue.Full exception if full.
 <el> = <Queue>.get()                           # Blocks until queue stops being empty.
 <el> = <Queue>.get_nowait()                    # Raises queue.Empty exception if empty.
 ```
+
+### Thread Pool Executor
+```python
+<Exec> = ThreadPoolExecutor(max_workers=None)  # Or: `with ThreadPoolExecutor() as <name>: …`
+<iter> = <Exec>.map(<func>, <args_1>, ...)     # Multithreaded and non-lazy map(). Keeps order.
+<Futr> = <Exec>.submit(<func>, <arg_1>, ...)   # Creates a thread and returns its Future object.
+<Exec>.shutdown(wait=True)                     # Blocks until all threads finish executing.
+```
+
+```python
+<bool> = <Future>.done()                       # Checks if the thread has finished executing.
+<obj>  = <Future>.result(timeout=None)         # Waits for thread to finish and returns result.
+<bool> = <Future>.cancel()                     # Returns False if thread is already running.
+<iter> = as_completed(<coll_of_Futures>)       # Each Future is yielded as it completes.
+```
+* **Map() and as_completed() also accept 'timeout' argument that causes TimeoutError if result isn't available in 'timeout' seconds after next() is called.**
+* **Exceptions that happen inside threads are raised when next() is called on map's iterator or when result() is called on a Future. Its exception() method returns exception or None.**
+* **An object with the same interface called ProcessPoolExecutor provides true parallelism by running a separate interpreter in each process. Arguments/results must be [pickable](#pickle).**
 
 
 Operator
@@ -2351,10 +2347,9 @@ async def random_controller(id_, moves):
 
 async def human_controller(screen, moves):
     while True:
-        ch = screen.getch()
         key_mappings = {258: D.s, 259: D.n, 260: D.w, 261: D.e}
-        if ch in key_mappings:
-            moves.put_nowait(('*', key_mappings[ch]))
+        if d := key_mappings.get(screen.getch()):
+            moves.put_nowait(('*', d))
         await asyncio.sleep(0.005)
 
 async def model(moves, state):
@@ -2372,6 +2367,7 @@ async def view(state, screen):
         for id_, p in state.items():
             screen.addstr(offset.y + (p.y - state['*'].y + H//2) % H,
                           offset.x + (p.x - state['*'].x + W//2) % W, str(id_))
+        screen.refresh()
         await asyncio.sleep(0.005)
 
 if __name__ == '__main__':
@@ -2991,7 +2987,7 @@ while not pg.event.get(pg.QUIT):
     deltas = {pg.K_UP: (0, -20), pg.K_RIGHT: (20, 0), pg.K_DOWN: (0, 20), pg.K_LEFT: (-20, 0)}
     for event in pg.event.get(pg.KEYDOWN):
         dx, dy = deltas.get(event.key, (0, 0))
-        rect.move_ip((dx, dy))
+        rect = rect.move((dx, dy))
     screen.fill((0, 0, 0))
     pg.draw.rect(screen, (255, 255, 255), rect)
     pg.display.flip()
@@ -3020,7 +3016,7 @@ while not pg.event.get(pg.QUIT):
 <Surf> = pg.Surface((width, height))            # New RGB surface. RGBA if `flags=pg.SRCALPHA`.
 <Surf> = pg.image.load(<path/file>)             # Loads the image. Format depends on source.
 <Surf> = pg.surfarray.make_surface(<np_array>)  # Also `<np_arr> = surfarray.pixels3d(<Surf>)`.
-<Surf> = <Surf>.subsurface(<Rect>)              # Returns a subsurface.
+<Surf> = <Surf>.subsurface(<Rect>)              # Creates a new surface from the cutout.
 ```
 
 ```python
@@ -3165,7 +3161,7 @@ Name: a, dtype: int64
 ```python
 <el> = <Sr>[key/index]                         # Or: <Sr>.key
 <Sr> = <Sr>[keys/indexes]                      # Or: <Sr>[<keys_slice/slice>]
-<Sr> = <Sr>[bools]                             # Or: <Sr>.i/loc[bools]
+<Sr> = <Sr>[bools]                             # Or: <Sr>.loc/iloc[bools]
 ```
 
 ```python

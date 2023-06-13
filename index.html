@@ -54,7 +54,7 @@
 
 <body>
   <header>
-    <aside>April 13, 2023</aside>
+    <aside>June 9, 2023</aside>
     <a href="https://gto76.github.io" rel="author">Jure Šorn</a>
   </header>
 
@@ -369,12 +369,10 @@ Point(x=<span class="hljs-number">1</span>, y=<span class="hljs-number">2</span>
 &lt;str&gt; = <span class="hljs-string">'%s, %s'</span> % (&lt;el_1&gt;, &lt;el_2&gt;)      <span class="hljs-comment"># Redundant and inferior C-style formatting.</span>
 </code></pre></div>
 
-<div><h3 id="attributes">Attributes</h3><pre><code class="python language-python hljs"><span class="hljs-meta">&gt;&gt;&gt; </span>Person = collections.namedtuple(<span class="hljs-string">'Person'</span>, <span class="hljs-string">'name height'</span>)
+<div><h3 id="example">Example</h3><pre><code class="python language-python hljs"><span class="hljs-meta">&gt;&gt;&gt; </span>Person = collections.namedtuple(<span class="hljs-string">'Person'</span>, <span class="hljs-string">'name height'</span>)
 <span class="hljs-meta">&gt;&gt;&gt; </span>person = Person(<span class="hljs-string">'Jean-Luc'</span>, <span class="hljs-number">187</span>)
-<span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-string">f'<span class="hljs-subst">{person.height}</span>'</span>
-<span class="hljs-string">'187'</span>
-<span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-string">'{p.height}'</span>.format(p=person)
-<span class="hljs-string">'187'</span>
+<span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-string">f'<span class="hljs-subst">{person.name}</span> is <span class="hljs-subst">{person.height / <span class="hljs-number">100</span>}</span> meters tall.'</span>
+<span class="hljs-string">'Jean-Luc is 1.87 meters tall.'</span>
 </code></pre></div>
 
 <div><h3 id="generaloptions">General Options</h3><pre><code class="python language-python hljs">{&lt;el&gt;:&lt;<span class="hljs-number">10</span>}                               <span class="hljs-comment"># '&lt;el&gt;      '</span>
@@ -386,7 +384,8 @@ Point(x=<span class="hljs-number">1</span>, y=<span class="hljs-number">2</span>
 
 <ul>
 <li><strong>Options can be generated dynamically: <code class="python hljs"><span class="hljs-string">f'<span class="hljs-subst">{&lt;el&gt;:{&lt;str/int&gt;}</span>[…]}'</span></code>.</strong></li>
-<li><strong>Adding <code class="python hljs"><span class="hljs-string">'!r'</span></code> before the colon converts object to string by calling its <a href="#class">repr()</a> method.</strong></li>
+<li><strong>Adding <code class="python hljs"><span class="hljs-string">'='</span></code> to the expression prepends it to the output: <code class="python hljs"><span class="hljs-string">f'<span class="hljs-subst">{<span class="hljs-number">1</span>+<span class="hljs-number">1</span>=}</span>'</span></code> returns <code class="python hljs"><span class="hljs-string">'1+1=2'</span></code>.</strong></li>
+<li><strong>Adding <code class="python hljs"><span class="hljs-string">'!r'</span></code> to the expression converts object to string by calling its <a href="#class">repr()</a> method.</strong></li>
 </ul>
 <div><h3 id="strings">Strings</h3><pre><code class="python language-python hljs">{<span class="hljs-string">'abcde'</span>:<span class="hljs-number">10</span>}                             <span class="hljs-comment"># 'abcde     '</span>
 {<span class="hljs-string">'abcde'</span>:<span class="hljs-number">10.3</span>}                           <span class="hljs-comment"># 'abc       '</span>
@@ -583,7 +582,7 @@ Point(x=<span class="hljs-number">1</span>, y=<span class="hljs-number">2</span>
 <li><strong>For abbreviated weekday and month use <code class="python hljs"><span class="hljs-string">'%a'</span></code> and <code class="python hljs"><span class="hljs-string">'%b'</span></code>.</strong></li>
 </ul>
 <div><h3 id="arithmetics">Arithmetics</h3><pre><code class="python language-python apache hljs">&lt;D/DT&gt;   = &lt;D/DT&gt;  ± &lt;TD&gt;                   <span class="hljs-comment"># Returned datetime can fall into missing hour.</span>
-&lt;TD&gt;     = &lt;D/DTn&gt; - &lt;D/DTn&gt;                <span class="hljs-comment"># Returns the difference, ignoring time jumps.</span>
+&lt;TD&gt;     = &lt;D/DTn&gt; - &lt;D/DTn&gt;                <span class="hljs-comment"># Returns the difference. Ignores time jumps.</span>
 &lt;TD&gt;     = &lt;DTa&gt;   - &lt;DTa&gt;                  <span class="hljs-comment"># Ignores time jumps if they share tzinfo object.</span>
 &lt;TD&gt;     = &lt;TD&gt;    * &lt;real&gt;                 <span class="hljs-comment"># Also: &lt;TD&gt; = abs(&lt;TD&gt;) and &lt;TD&gt; = &lt;TD&gt; ±% &lt;TD&gt;.</span>
 &lt;float&gt;  = &lt;TD&gt;    / &lt;TD&gt;                   <span class="hljs-comment"># How many weeks/years there are in TD. Also //.</span>
@@ -903,9 +902,10 @@ Z = dataclasses.make_dataclass(<span class="hljs-string">'Z'</span>, [<span clas
 &lt;class&gt; = make_dataclass(<span class="hljs-string">'&lt;class_name&gt;'</span>, &lt;coll_of_tuples&gt;)
 &lt;tuple&gt; = (<span class="hljs-string">'&lt;attr_name&gt;'</span>, &lt;type&gt; [, &lt;default_value&gt;])</code></pre></div>
 
-<div><h4 id="restoftypeannotationscpythoninterpreterignoresthemall">Rest of type annotations (CPython interpreter ignores them all):</h4><pre><code class="python language-python hljs"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">func</span><span class="hljs-params">(&lt;arg_name&gt;: &lt;type&gt; [= &lt;obj&gt;])</span> -&gt; &lt;type&gt;:</span> ...
-&lt;var_name&gt;: typing.List/Set/Iterable/Sequence/Optional[&lt;type&gt;]
-&lt;var_name&gt;: typing.Dict/Tuple/Union[&lt;type&gt;, ...]
+<div><h4 id="restoftypeannotationscpythoninterpreterignoresthemall">Rest of type annotations (CPython interpreter ignores them all):</h4><pre><code class="python language-python hljs"><span class="hljs-keyword">import</span> typing <span class="hljs-keyword">as</span> tp, collections.abc <span class="hljs-keyword">as</span> abc
+&lt;var_name&gt;: list/set/abc.Iterable/abc.Sequence/tp.Optional[&lt;type&gt;] [= &lt;obj&gt;]
+&lt;var_name&gt;: dict/tuple/tp.Union[&lt;type&gt;, ...] [= &lt;obj&gt;]
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">func</span><span class="hljs-params">(&lt;arg_name&gt;: &lt;type&gt; [= &lt;obj&gt;])</span> -&gt; &lt;type&gt;:</span> ...
 </code></pre></div>
 
 <div><h3 id="slots">Slots</h3><p><strong>Mechanism that restricts objects to attributes listed in 'slots' and significantly reduces their memory footprint.</strong></p><pre><code class="python language-python hljs"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyClassWithSlots</span>:</span>
@@ -1236,8 +1236,7 @@ error_msg = <span class="hljs-string">''</span>.join(traceback.format_exception(
  ├── SystemExit                   <span class="hljs-comment"># Raised by the sys.exit() function.</span>
  ├── KeyboardInterrupt            <span class="hljs-comment"># Raised when the user hits the interrupt key (ctrl-c).</span>
  └── Exception                    <span class="hljs-comment"># User-defined exceptions should be derived from this class.</span>
-      ├── ArithmeticError         <span class="hljs-comment"># Base class for arithmetic errors.</span>
-      │    └── ZeroDivisionError  <span class="hljs-comment"># Raised when dividing by zero.</span>
+      ├── ArithmeticError         <span class="hljs-comment"># Base class for arithmetic errors such as ZeroDivisionError.</span>
       ├── AssertionError          <span class="hljs-comment"># Raised by `assert &lt;exp&gt;` if expression returns false value.</span>
       ├── AttributeError          <span class="hljs-comment"># Raised when object doesn't have requested attribute/method.</span>
       ├── EOFError                <span class="hljs-comment"># Raised by input() when it hits an end-of-file condition.</span>
@@ -1247,13 +1246,14 @@ error_msg = <span class="hljs-string">''</span>.join(traceback.format_exception(
       ├── MemoryError             <span class="hljs-comment"># Out of memory. Could be too late to start deleting vars.</span>
       ├── NameError               <span class="hljs-comment"># Raised when nonexistent name (variable/func/class) is used.</span>
       │    └── UnboundLocalError  <span class="hljs-comment"># Raised when local name is used before it's being defined.</span>
-      ├── OSError                 <span class="hljs-comment"># Errors such as FileExistsError/PermissionError (see Open).</span>
+      ├── OSError                 <span class="hljs-comment"># Errors such as FileExistsError/PermissionError (see #Open).</span>
+      │    └── ConnectionError    <span class="hljs-comment"># Errors such as BrokenPipeError/ConnectionAbortedError.</span>
       ├── RuntimeError            <span class="hljs-comment"># Raised by errors that don't fall into other categories.</span>
+      │    ├── NotImplementedErr  <span class="hljs-comment"># Can be raised by abstract methods or by unfinished code.</span>
       │    └── RecursionError     <span class="hljs-comment"># Raised when the maximum recursion depth is exceeded.</span>
       ├── StopIteration           <span class="hljs-comment"># Raised by next() when run on an empty iterator.</span>
       ├── TypeError               <span class="hljs-comment"># Raised when an argument is of the wrong type.</span>
       └── ValueError              <span class="hljs-comment"># When argument has the right type but inappropriate value.</span>
-           └── UnicodeError       <span class="hljs-comment"># Raised when encoding/decoding strings to/from bytes fails.</span>
 </code></pre></div>
 
 <div><h4 id="collectionsandtheirexceptions">Collections and their exceptions:</h4><pre><code class="text language-text">┏━━━━━━━━━━━┯━━━━━━━━━━━━┯━━━━━━━━━━━━┯━━━━━━━━━━━━┓
@@ -1592,7 +1592,7 @@ CompletedProcess(args=[<span class="hljs-string">'bc'</span>, <span class="hljs-
 <li><strong>Passed values can be of type str, int, float, bytes, None, bool, datetime.date or datetime.datetime.</strong></li>
 <li><strong>Bools will be stored and returned as ints and dates as <a href="#encode">ISO formatted strings</a>.</strong></li>
 </ul>
-<div><h3 id="example">Example</h3><p><strong>Values are not actually saved in this example because <code class="python hljs"><span class="hljs-string">'conn.commit()'</span></code> is omitted!</strong></p><pre><code class="python language-python hljs"><span class="hljs-meta">&gt;&gt;&gt; </span>conn = sqlite3.connect(<span class="hljs-string">'test.db'</span>)
+<div><h3 id="example-1">Example</h3><p><strong>Values are not actually saved in this example because <code class="python hljs"><span class="hljs-string">'conn.commit()'</span></code> is omitted!</strong></p><pre><code class="python language-python hljs"><span class="hljs-meta">&gt;&gt;&gt; </span>conn = sqlite3.connect(<span class="hljs-string">'test.db'</span>)
 <span class="hljs-meta">&gt;&gt;&gt; </span>conn.execute(<span class="hljs-string">'CREATE TABLE person (person_id INTEGER PRIMARY KEY, name, height)'</span>)
 <span class="hljs-meta">&gt;&gt;&gt; </span>conn.execute(<span class="hljs-string">'INSERT INTO person VALUES (NULL, ?, ?)'</span>, (<span class="hljs-string">'Jean-Luc'</span>, <span class="hljs-number">187</span>)).lastrowid
 <span class="hljs-number">1</span>
@@ -1752,8 +1752,8 @@ CompletedProcess(args=[<span class="hljs-string">'bc'</span>, <span class="hljs-
 &lt;lock&gt;.release()                               <span class="hljs-comment"># Makes the lock available again.</span>
 </code></pre></div>
 
-<div><h4 id="or-1">Or:</h4><pre><code class="python language-python hljs"><span class="hljs-keyword">with</span> &lt;lock&gt;:                                   <span class="hljs-comment"># Enters the block by calling acquire(),</span>
-    ...                                        <span class="hljs-comment"># and exits it with release(), even on error.</span>
+<div><h4 id="or-1">Or:</h4><pre><code class="python language-python hljs"><span class="hljs-keyword">with</span> &lt;lock&gt;:                                   <span class="hljs-comment"># Enters the block by calling acquire() and</span>
+    ...                                        <span class="hljs-comment"># exits it with release(), even on error.</span>
 </code></pre></div>
 
 <div><h3 id="semaphoreeventbarrier">Semaphore, Event, Barrier</h3><pre><code class="python language-python hljs">&lt;Semaphore&gt; = Semaphore(value=<span class="hljs-number">1</span>)               <span class="hljs-comment"># Lock that can be acquired by 'value' threads.</span>
@@ -1761,30 +1761,29 @@ CompletedProcess(args=[<span class="hljs-string">'bc'</span>, <span class="hljs-
 &lt;Barrier&gt;   = Barrier(n_times)                 <span class="hljs-comment"># Wait() blocks until it's called n_times.</span>
 </code></pre></div>
 
-<div><h3 id="threadpoolexecutor">Thread Pool Executor</h3><ul>
-<li><strong>Object that manages thread execution.</strong></li>
-<li><strong>An object with the same interface called ProcessPoolExecutor provides true parallelism by running a separate interpreter in each process. All arguments must be <a href="#pickle">pickable</a>.</strong></li>
-</ul><pre><code class="python language-python hljs">&lt;Exec&gt; = ThreadPoolExecutor(max_workers=<span class="hljs-keyword">None</span>)  <span class="hljs-comment"># Or: `with ThreadPoolExecutor() as &lt;name&gt;: …`</span>
-&lt;Exec&gt;.shutdown(wait=<span class="hljs-keyword">True</span>)                     <span class="hljs-comment"># Blocks until all threads finish executing.</span>
-</code></pre></div>
-
-
-<pre><code class="python language-python hljs">&lt;iter&gt; = &lt;Exec&gt;.map(&lt;func&gt;, &lt;args_1&gt;, ...)     <span class="hljs-comment"># A multithreaded and non-lazy map().</span>
-&lt;Futr&gt; = &lt;Exec&gt;.submit(&lt;func&gt;, &lt;arg_1&gt;, ...)   <span class="hljs-comment"># Starts a thread and returns its Future object.</span>
-&lt;bool&gt; = &lt;Futr&gt;.done()                         <span class="hljs-comment"># Checks if the thread has finished executing.</span>
-&lt;obj&gt;  = &lt;Futr&gt;.result()                       <span class="hljs-comment"># Waits for thread to finish and returns result.</span>
-&lt;iter&gt; = as_completed(&lt;coll_of_Futr&gt;)          <span class="hljs-comment"># Each Future is yielded as it completes.</span>
-</code></pre>
-<div><h3 id="queue">Queue</h3><p><strong>A thread-safe FIFO queue. For LIFO queue use LifoQueue.</strong></p><pre><code class="python language-python hljs"><span class="hljs-keyword">from</span> queue <span class="hljs-keyword">import</span> Queue
-&lt;Queue&gt; = Queue(maxsize=<span class="hljs-number">0</span>)
-</code></pre></div>
-
-
-<pre><code class="python language-python hljs">&lt;Queue&gt;.put(&lt;el&gt;)                              <span class="hljs-comment"># Blocks until queue stops being full.</span>
+<div><h3 id="queue">Queue</h3><pre><code class="python language-python hljs">&lt;Queue&gt; = queue.Queue(maxsize=<span class="hljs-number">0</span>)               <span class="hljs-comment"># A thread-safe FIFO queue. Also LifoQueue.</span>
+&lt;Queue&gt;.put(&lt;el&gt;)                              <span class="hljs-comment"># Blocks until queue stops being full.</span>
 &lt;Queue&gt;.put_nowait(&lt;el&gt;)                       <span class="hljs-comment"># Raises queue.Full exception if full.</span>
 &lt;el&gt; = &lt;Queue&gt;.get()                           <span class="hljs-comment"># Blocks until queue stops being empty.</span>
 &lt;el&gt; = &lt;Queue&gt;.get_nowait()                    <span class="hljs-comment"># Raises queue.Empty exception if empty.</span>
+</code></pre></div>
+
+<div><h3 id="threadpoolexecutor">Thread Pool Executor</h3><pre><code class="python language-python hljs">&lt;Exec&gt; = ThreadPoolExecutor(max_workers=<span class="hljs-keyword">None</span>)  <span class="hljs-comment"># Or: `with ThreadPoolExecutor() as &lt;name&gt;: …`</span>
+&lt;iter&gt; = &lt;Exec&gt;.map(&lt;func&gt;, &lt;args_1&gt;, ...)     <span class="hljs-comment"># Multithreaded and non-lazy map(). Keeps order.</span>
+&lt;Futr&gt; = &lt;Exec&gt;.submit(&lt;func&gt;, &lt;arg_1&gt;, ...)   <span class="hljs-comment"># Creates a thread and returns its Future object.</span>
+&lt;Exec&gt;.shutdown(wait=<span class="hljs-keyword">True</span>)                     <span class="hljs-comment"># Blocks until all threads finish executing.</span>
+</code></pre></div>
+
+<pre><code class="python language-python hljs">&lt;bool&gt; = &lt;Future&gt;.done()                       <span class="hljs-comment"># Checks if the thread has finished executing.</span>
+&lt;obj&gt;  = &lt;Future&gt;.result(timeout=<span class="hljs-keyword">None</span>)         <span class="hljs-comment"># Waits for thread to finish and returns result.</span>
+&lt;bool&gt; = &lt;Future&gt;.cancel()                     <span class="hljs-comment"># Returns False if thread is already running.</span>
+&lt;iter&gt; = as_completed(&lt;coll_of_Futures&gt;)       <span class="hljs-comment"># Each Future is yielded as it completes.</span>
 </code></pre>
+<ul>
+<li><strong>Map() and as_completed() also accept 'timeout' argument that causes TimeoutError if result isn't available in 'timeout' seconds after next() is called.</strong></li>
+<li><strong>Exceptions that happen inside threads are raised when next() is called on map's iterator or when result() is called on a Future. Its exception() method returns exception or None.</strong></li>
+<li><strong>An object with the same interface called ProcessPoolExecutor provides true parallelism by running a separate interpreter in each process. Arguments/results must be <a href="#pickle">pickable</a>.</strong></li>
+</ul>
 <div><h2 id="operator"><a href="#operator" name="operator">#</a>Operator</h2><p><strong>Module of functions that provide the functionality of operators.</strong></p><pre><code class="python language-python hljs"><span class="hljs-keyword">import</span> operator <span class="hljs-keyword">as</span> op
 &lt;obj&gt;     = op.add/sub/mul/truediv/floordiv/mod(&lt;obj&gt;, &lt;obj&gt;)     <span class="hljs-comment"># +, -, *, /, //, %</span>
 &lt;int/set&gt; = op.and_/or_/xor(&lt;int/set&gt;, &lt;int/set&gt;)                 <span class="hljs-comment"># &amp;, |, ^</span>
@@ -1811,7 +1810,7 @@ first_element    = op.methodcaller(<span class="hljs-string">'pop'</span>, <span
 
 
 
-<div><h3 id="attributes-1">Attributes</h3><pre><code class="python language-python hljs">&lt;list&gt; = dir(&lt;object&gt;)                     <span class="hljs-comment"># Names of object's attributes (incl. methods).</span>
+<div><h3 id="attributes">Attributes</h3><pre><code class="python language-python hljs">&lt;list&gt; = dir(&lt;object&gt;)                     <span class="hljs-comment"># Names of object's attributes (incl. methods).</span>
 &lt;dict&gt; = vars(&lt;object&gt;)                    <span class="hljs-comment"># Dict of writable attributes. Also &lt;obj&gt;.__dict__.</span>
 &lt;bool&gt; = hasattr(&lt;object&gt;, <span class="hljs-string">'&lt;attr_name&gt;'</span>)  <span class="hljs-comment"># Checks if getattr() raises an AttributeError.</span>
 value  = getattr(&lt;object&gt;, <span class="hljs-string">'&lt;attr_name&gt;'</span>)  <span class="hljs-comment"># Raises AttributeError if attribute is missing.</span>
@@ -1928,10 +1927,9 @@ W, H = <span class="hljs-number">15</span>, <span class="hljs-number">7</span>  
 
 <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">human_controller</span><span class="hljs-params">(screen, moves)</span>:</span>
     <span class="hljs-keyword">while</span> <span class="hljs-keyword">True</span>:
-        ch = screen.getch()
         key_mappings = {<span class="hljs-number">258</span>: D.s, <span class="hljs-number">259</span>: D.n, <span class="hljs-number">260</span>: D.w, <span class="hljs-number">261</span>: D.e}
-        <span class="hljs-keyword">if</span> ch <span class="hljs-keyword">in</span> key_mappings:
-            moves.put_nowait((<span class="hljs-string">'*'</span>, key_mappings[ch]))
+        <span class="hljs-keyword">if</span> d := key_mappings.get(screen.getch()):
+            moves.put_nowait((<span class="hljs-string">'*'</span>, d))
         <span class="hljs-keyword">await</span> asyncio.sleep(<span class="hljs-number">0.005</span>)
 
 <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">model</span><span class="hljs-params">(moves, state)</span>:</span>
@@ -1949,6 +1947,7 @@ W, H = <span class="hljs-number">15</span>, <span class="hljs-number">7</span>  
         <span class="hljs-keyword">for</span> id_, p <span class="hljs-keyword">in</span> state.items():
             screen.addstr(offset.y + (p.y - state[<span class="hljs-string">'*'</span>].y + H//<span class="hljs-number">2</span>) % H,
                           offset.x + (p.x - state[<span class="hljs-string">'*'</span>].x + W//<span class="hljs-number">2</span>) % W, str(id_))
+        screen.refresh()
         <span class="hljs-keyword">await</span> asyncio.sleep(<span class="hljs-number">0.005</span>)
 
 <span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">'__main__'</span>:
@@ -2226,7 +2225,7 @@ right = [[<span class="hljs-number">0.1</span>,  <span class="hljs-number">0.6</
          [<span class="hljs-number">0.1</span>,  <span class="hljs-number">0.6</span>,  <span class="hljs-number">0.8</span>]]
 </code></pre></div>
 
-<div><h3 id="example-1">Example</h3><div><h4 id="foreachpointreturnsindexofitsnearestpoint010608121">For each point returns index of its nearest point (<code class="python hljs">[<span class="hljs-number">0.1</span>, <span class="hljs-number">0.6</span>, <span class="hljs-number">0.8</span>] =&gt; [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">1</span>]</code>):</h4><pre><code class="python language-python hljs"><span class="hljs-meta">&gt;&gt;&gt; </span>points = np.array([<span class="hljs-number">0.1</span>, <span class="hljs-number">0.6</span>, <span class="hljs-number">0.8</span>])
+<div><h3 id="example-2">Example</h3><div><h4 id="foreachpointreturnsindexofitsnearestpoint010608121">For each point returns index of its nearest point (<code class="python hljs">[<span class="hljs-number">0.1</span>, <span class="hljs-number">0.6</span>, <span class="hljs-number">0.8</span>] =&gt; [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">1</span>]</code>):</h4><pre><code class="python language-python hljs"><span class="hljs-meta">&gt;&gt;&gt; </span>points = np.array([<span class="hljs-number">0.1</span>, <span class="hljs-number">0.6</span>, <span class="hljs-number">0.8</span>])
  [ <span class="hljs-number">0.1</span>,  <span class="hljs-number">0.6</span>,  <span class="hljs-number">0.8</span>]
 <span class="hljs-meta">&gt;&gt;&gt; </span>wrapped_points = points.reshape(<span class="hljs-number">3</span>, <span class="hljs-number">1</span>)
 [[ <span class="hljs-number">0.1</span>],
@@ -2443,7 +2442,7 @@ rect = pg.Rect(<span class="hljs-number">240</span>, <span class="hljs-number">2
     deltas = {pg.K_UP: (<span class="hljs-number">0</span>, <span class="hljs-number">-20</span>), pg.K_RIGHT: (<span class="hljs-number">20</span>, <span class="hljs-number">0</span>), pg.K_DOWN: (<span class="hljs-number">0</span>, <span class="hljs-number">20</span>), pg.K_LEFT: (<span class="hljs-number">-20</span>, <span class="hljs-number">0</span>)}
     <span class="hljs-keyword">for</span> event <span class="hljs-keyword">in</span> pg.event.get(pg.KEYDOWN):
         dx, dy = deltas.get(event.key, (<span class="hljs-number">0</span>, <span class="hljs-number">0</span>))
-        rect.move_ip((dx, dy))
+        rect = rect.move((dx, dy))
     screen.fill((<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>))
     pg.draw.rect(screen, (<span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">255</span>), rect)
     pg.display.flip()
@@ -2465,7 +2464,7 @@ rect = pg.Rect(<span class="hljs-number">240</span>, <span class="hljs-number">2
 &lt;Surf&gt; = pg.Surface((width, height))            <span class="hljs-comment"># New RGB surface. RGBA if `flags=pg.SRCALPHA`.</span>
 &lt;Surf&gt; = pg.image.load(&lt;path/file&gt;)             <span class="hljs-comment"># Loads the image. Format depends on source.</span>
 &lt;Surf&gt; = pg.surfarray.make_surface(&lt;np_array&gt;)  <span class="hljs-comment"># Also `&lt;np_arr&gt; = surfarray.pixels3d(&lt;Surf&gt;)`.</span>
-&lt;Surf&gt; = &lt;Surf&gt;.subsurface(&lt;Rect&gt;)              <span class="hljs-comment"># Returns a subsurface.</span>
+&lt;Surf&gt; = &lt;Surf&gt;.subsurface(&lt;Rect&gt;)              <span class="hljs-comment"># Creates a new surface from the cutout.</span>
 </code></pre></div>
 
 
@@ -2587,7 +2586,7 @@ Name: a, dtype: int64
 </code></pre>
 <pre><code class="python language-python hljs">&lt;el&gt; = &lt;Sr&gt;[key/index]                         <span class="hljs-comment"># Or: &lt;Sr&gt;.key</span>
 &lt;Sr&gt; = &lt;Sr&gt;[keys/indexes]                      <span class="hljs-comment"># Or: &lt;Sr&gt;[&lt;keys_slice/slice&gt;]</span>
-&lt;Sr&gt; = &lt;Sr&gt;[bools]                             <span class="hljs-comment"># Or: &lt;Sr&gt;.i/loc[bools]</span>
+&lt;Sr&gt; = &lt;Sr&gt;[bools]                             <span class="hljs-comment"># Or: &lt;Sr&gt;.loc/iloc[bools]</span>
 </code></pre>
 <pre><code class="python language-python hljs">&lt;Sr&gt; = &lt;Sr&gt; &gt;&lt;== &lt;el/Sr&gt;                       <span class="hljs-comment"># Returns a Series of bools.</span>
 &lt;Sr&gt; = &lt;Sr&gt; +-*/ &lt;el/Sr&gt;                       <span class="hljs-comment"># Items with non-matching keys get value NaN.</span>
@@ -2935,7 +2934,7 @@ $ pyinstaller script.py --add-data '&lt;path&gt;:.'  <span class="hljs-comment">
  
 
   <footer>
-    <aside>April 13, 2023</aside>
+    <aside>June 9, 2023</aside>
     <a href="https://gto76.github.io" rel="author">Jure Šorn</a>
   </footer>
 
